@@ -334,7 +334,7 @@ if __name__ == "__main__":
     #Prepare DB info
     db = pymysql.connect(host="proton.netsec.colostate.edu",
                      user="root", 
-                     passwd="n3ts3cm5q1", 
+                     passwd="*****", 
                     db=dbname)
 
     onlyfiles.sort()
