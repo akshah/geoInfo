@@ -8,13 +8,6 @@ class MaxMindRepo(object):
         self.binFileLocation=binFileLocation
         #TODO: If the above file does not exists then this module should use maxmindDataEngine and pull the latest bin
         self.contDB = pip.GeoIP(self.binFileLocation, pip.MEMORY_CACHE)
-
-    def get(self,cls):
-        cls.lock.acquire()
-        if cls.instance is None:
-            cls.instance = cls()
-        cls.lock.release()
-        return cls.instance        
   
     def ipToCountry(self, ip):
         try:
