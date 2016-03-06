@@ -12,8 +12,8 @@ class MaxMindRepo(object):
         self.binFileLocation=binFileLocation
         #TODO: If the above file does not exists then this module should use maxmindDataEngine and pull the latest bin
         
-        #self.asDB = pip.GeoIP('/home3/akshah/sitePackages/geoInfo/GeoInfo/maxmindBin/GeoIPASNum.dat', pip.MEMORY_CACHE)
-        #self.contDB = pip.GeoIP('/home3/akshah/sitePackages/geoInfo/GeoInfo/maxmindBin/GeoLiteCity.dat', pip.MEMORY_CACHE)
+        #self.asDB = pip.GeoIP('/home3/akshah/sitePackages/geoInfo/geoInfo/maxmindBin/GeoIPASNum.dat', pip.MEMORY_CACHE)
+        #self.contDB = pip.GeoIP('/home3/akshah/sitePackages/geoInfo/geoInfo/maxmindBin/GeoLiteCity.dat', pip.MEMORY_CACHE)
         self.contDB = pip.GeoIP(self.binFileLocation, pip.MEMORY_CACHE)
 
     def get(self,cls):

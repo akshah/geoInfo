@@ -20,7 +20,7 @@ import os
 from os import listdir
 from os.path import isfile, join
 
-from GeoInfo import MaxMindRepo
+from geoInfo import MaxMindRepo
 
 def usage(msg="Usage"):
     print(msg)

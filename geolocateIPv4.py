@@ -1,5 +1,5 @@
 from __future__ import print_function
-from GeoInfo.MaxMindRepo import MaxMindRepo
+from geoInfo.MaxMindRepo import MaxMindRepo
 import sys
 
 if len(sys.argv) != 2:
