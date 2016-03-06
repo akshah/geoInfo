@@ -1,19 +1,12 @@
-import pygeoip as pip  
-#import multiprocessing
-
-'MaxMindRepo class is used by mrt2db_geo'
+import pygeoip as pip
 
 class MaxMindRepo(object):
-    
+    """Read MaxMind binary file to return IPv4 location"""
     instance = None
-    #lock = Lock()
     
     def __init__(self,binFileLocation='/home3/akshah/akshah_cron_bin/latest_maxmind_bin'):
         self.binFileLocation=binFileLocation
         #TODO: If the above file does not exists then this module should use maxmindDataEngine and pull the latest bin
-        
-        #self.asDB = pip.GeoIP('/home3/akshah/sitePackages/geoInfo/geoInfo/maxmindBin/GeoIPASNum.dat', pip.MEMORY_CACHE)
-        #self.contDB = pip.GeoIP('/home3/akshah/sitePackages/geoInfo/geoInfo/maxmindBin/GeoLiteCity.dat', pip.MEMORY_CACHE)
         self.contDB = pip.GeoIP(self.binFileLocation, pip.MEMORY_CACHE)
 
     def get(self,cls):
