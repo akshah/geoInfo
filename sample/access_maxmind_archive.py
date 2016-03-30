@@ -3,7 +3,7 @@ Created on Jan 20, 2016
 
 @author: akshah
 '''
-from DataEngine.maxMindEngine import maxMindEngine
+from geoInfo.maxMindEngine import maxMindEngine
 import time
 
 
