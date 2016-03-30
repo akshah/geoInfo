@@ -379,16 +379,9 @@ if __name__ == "__main__":
                 mrtfiles.append(os.path.join(dp, name))
 
 
-    #Prepare DB info
-    db = pymysql.connect(host="proton.netsec.colostate.edu",
-                     user="root", 
-                     passwd="*****", 
-                    db=dbname)
-
     mrtfiles.sort()
     runAnalysis(mrtfiles)
- 
-    db.close()
+
 
     end_time,_=current_time()
     logger.print_log('Finished processing in '+str(int((end_time-start_time)/60))+' minutes and '+str(int((end_time-start_time)%60))+' seconds.')
