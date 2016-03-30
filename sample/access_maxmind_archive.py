@@ -13,7 +13,7 @@ def current_time():
 if __name__ == '__main__':
     start_time,_=current_time()
     
-    mde=maxMindEngine()
+    mde=maxMindDataEngine()
     
     #Download and push to DB from MaxMind
     #mde.fetchMaxMindFiles()
