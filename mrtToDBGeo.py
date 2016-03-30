@@ -401,7 +401,7 @@ if __name__ == "__main__":
 
 
     mrtfiles.sort()
-    print(mrtfiles)
+    #print(mrtfiles)
     runAnalysis(mrtfiles)
 
 
