@@ -316,7 +316,7 @@ def runAnalysis(onlyfiles):
     inner_pool=processPool(numThreads=numTh)
     if isTest:
         toProcess=toProcess[:10000]
-    retvals=inner_pool.getResultViaThreads(processEachPrefix,toProcess)
+    retvals=inner_pool.runParallelWithPool(processEachPrefix,toProcess)
     dbpush_prefix_block_geo(db)
     dbpush_asn_prefix_geo(db)
     db.commit()
