@@ -338,16 +338,16 @@ if __name__ == "__main__":
     list_of_already_processed_ribs="geo_processed_ribs.txt"
     list_of_already_processed_prefixes="geo_processed_prefixes.txt"
     prefix_block_geo="prefix_block_geo.txt"
-    f=open(prefix_block_geo,w)
+    f=open(prefix_block_geo,'w')
     f.close()
     asn_prefix_geo="asn_prefix_geo.txt"
-    f=open(asn_prefix_geo,w)
+    f=open(asn_prefix_geo,'w')
     f.close()
     unresolved_ips='unresolved_ips.txt'
-    f=open(unresolved_ips,w)
+    f=open(unresolved_ips,'w')
     f.close()
     unused_asprefix='unused_asprefix.txt'
-    f=open(unused_asprefix,w)
+    f=open(unused_asprefix,'w')
     f.close()
     maxmind = MaxMindRepo('/home3/akshah/maxmindFiles/20160105_maxmind_bin')
     geoDate='20160105'
