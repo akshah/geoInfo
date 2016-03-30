@@ -120,6 +120,16 @@ def print_unresolved_ips(prefixHost):
     finally:
         lock.release()
 
+def print_unused_asprefix(asprefix):
+    lock = threading.RLock()
+    lock.acquire()
+    try:
+        Lfile = open(unused_asprefixlatest_m,'a+')
+        print(asprefix,file=Lfile)
+        Lfile.close()
+    finally:
+        lock.release()
+
 
 def getProcessedPrefixes():
     try:
@@ -131,9 +141,9 @@ def getProcessedPrefixes():
             lines = f.read().splitlines()
     return lines
 
-def dbpush_prefix_block_geo(db): 
+def dbpush_prefix_block_geo(db):
     data=[]
-    with closing( db.cursor() ) as cur: 
+    with closing( db.cursor() ) as cur:
         try:
             fn=open(prefix_block_geo)
             lines=fn.read().splitlines()
@@ -150,13 +160,13 @@ def dbpush_prefix_block_geo(db):
             fn.close()
             cur.executemany("insert into BlockGeo(GeoDate,BGPPrefix,Sub24Block,BlockLocation) values (%s,%s,%s,%s)",data)
             db.commit()
-                
+
         except:
            raise Exception('Insert to BlockGeo Failed')
 
-def dbpush_asn_prefix_geo(db): 
+def dbpush_asn_prefix_geo(db):
     data=[]
-    with closing( db.cursor() ) as cur: 
+    with closing( db.cursor() ) as cur:
         try:
             fn=open(asn_prefix_geo)
             lines=fn.read().splitlines()
@@ -181,20 +191,20 @@ def deleteContent(fName):
     with open(fName, "w"):
         pass
 
-            
+
 def processEachPrefix(asnprefix):
         vals=asnprefix.split('|')
         OriginAS=vals[0]
-        prefix=vals[1]            
+        prefix=vals[1]
         toPushA =[]
         toPushB =[]
         NULL=None
         #Get all /24s for the Prefix
         if prefix == '0.0.0.0/0':
             return
-        
+
         network = ipaddress.IPv4Network(prefix)
-        
+
         all24 = [network] if network.prefixlen >= 24 else network.subnets(new_prefix=24)
         prefix_locations = set()
         for net in all24:
@@ -207,10 +217,10 @@ def processEachPrefix(asnprefix):
             #indices = random.sample(range(numofhosts),numofhosts)#Pick all IPs
             #else:
                 #indices = random.sample(range(numofhosts),10)#Pick 10 random IPs at max
-            
+
             for index in range(0,numofhosts):
                 allHostsSampled.append(allHosts[index])
-                        
+
             #Getting the geolocation
             locations = set()
             for host in allHostsSampled:
@@ -218,101 +228,118 @@ def processEachPrefix(asnprefix):
                 if len(locations) == 0:
                     print_unresolved_ip(prefix+'|'+host)
                 prefix_locations=prefix_locations.union(locations)
-            #Write the following to FILE-A    
+            #Write the following to FILE-A
             tofileA=prefix+"\t"+str(net)+"\t"+str(locations)
             toPushA.append(tofileA)
-        
+
         #Write the following to FILE-B
         tofileB=OriginAS+"\t"+prefix+"\t"+str(prefix_locations)
         toPushB.append(tofileB)
-             
+
         writeObj.write_prefix_block_geo(toPushA)
         writeObj.write_asn_prefix_geo(toPushB)
-          
+
 
 def runAnalysis(onlyfiles):
     numfile=0
     totalfiles=len(onlyfiles)
-
+    asnPrefixDict={}
+    toProcessSet =set()
     for fn in onlyfiles:
         numfile+=1
 
         #Check if this file was not processed before
         processedRibs = getProcessedRibs()
-        
-        toProcess = []
-        toProcessSet =set()
+
         deleteContent(prefix_block_geo)
         deleteContent(asn_prefix_geo)
-        
+
         if fn in processedRibs:
-            logger.print_log('MRT file '+fn+' was previously processed. Skipping it.') 
+            logger.print_log('MRT file '+fn+' was previously processed. Skipping it.')
             continue
+        elements=fn.split('.')
+        dataDay=elements[len(elements)-3]
         filename=dirpath+'/'+fn
-        logger.print_log("bgpdump on " + filename)  
-        bashCommand='bgpdump -m '+filename 
-    
+        logger.print_log("bgpdump on " + filename)
+        bashCommand='bgpdump -m '+filename
+
         lines=[]
         try:
             lines = subprocess.check_output(["bgpdump", "-m", filename],universal_newlines=True)
         except:
             continue
-    
-               
-        logger.print_log('Creating ASN-Prefix list for '+filename) 
+
+
+        logger.print_log('Creating ASN-Prefix list for '+filename)
         for line in lines.split("\n"):
             if not line.startswith("TAB"):
                 continue
             pieces = line.split('|')
-    
+
             prefix = pieces[5]
             prefix.rstrip()
-            #Validate IPv4 Prefix                
+            #Validate IPv4 Prefix
             try:
                 net = ipaddress.IPv4Network(prefix)
             except:
                 continue #Not a valid v4 address,move on
-            
+
             aspath = pieces[6]
-            aspath.rstrip()  
+            aspath.rstrip()
             all_ASes_orig=aspath.split(' ')
             OriginAS=all_ASes_orig[len(all_ASes_orig)-1]
-            keyOriginASprefix=OriginAS+"|"+prefix
-            if keyOriginASprefix in processedPrefixes:
-                continue #Skip this originasn-prefix
-            else:
-                toProcessSet.add(keyOriginASprefix)
-        toProcess=list(toProcessSet)   #Remove Duplicate Prefixes     
-        logger.print_log('List created. '+str(len(toProcess))+' new prefixes to be processed for '+filename)
-        numTh=25  
-        inner_pool=TPool(numThreads=numTh)
-        if isTest:
-            toProcess=toProcess[:10000]
-        retvals=inner_pool.getResultViaThreads(processEachPrefix,toProcess)
-        dbpush_prefix_block_geo(db)
-        dbpush_asn_prefix_geo(db)
-        db.commit()
-        print_list_of_processed_ribs(filename)
-        for entry in toProcess:
-            print_list_of_processed_prefixes(entry)
+            if OriginAS not in asnPrefixDict.keys():
+                asnPrefixDict[OriginAS]={}
+            if prefix not in asnPrefixDict[OriginAS].keys():
+                asnPrefixDict[OriginAS][prefix]=[]
+            if dataDay not in asnPrefixDict[OriginAS][prefix]:
+                asnPrefixDict[OriginAS][prefix].append(dataDay)
+
         logger.print_log('Done processing for '+filename)
+
+    for oas in asnPrefixDict.keys():
+        for prf in asnPrefixDict[oas].keys():
+            keyOriginASprefix=oas+"|"+prefix
+            if len(asnPrefixDict[oas][prf]) > 7:
+                if keyOriginASprefix in processedPrefixes:
+                    continue #Skip this originasn-prefix
+                else:
+                    toProcessSet.add(keyOriginASprefix)
+            else
+                print_unused_asprefix(keyOriginASprefix)
+
+    toProcess=list(toProcessSet)   #Remove Duplicate Prefixes
+    logger.print_log('List created. '+str(len(toProcess))+' new prefixes to be processed for '+filename)
+    numTh=25
+    inner_pool=TPool(numThreads=numTh)
+    if isTest:
+        toProcess=toProcess[:10000]
+    retvals=inner_pool.getResultViaThreads(processEachPrefix,toProcess)
+    dbpush_prefix_block_geo(db)
+    dbpush_asn_prefix_geo(db)
+    db.commit()
+    print_list_of_processed_ribs(filename)
+    for entry in toProcess:
+        print_list_of_processed_prefixes(entry)
+    logger.print_log('Done all processing')
 
 if __name__ == "__main__":
     start_time,_=current_time()
-    
+
     if sys.version_info < (3,0):
         print("ERROR: Please use python3.")
         exit(0)
-       
+
     isTest=False
-       
+
     dbname="geoinfo_archive"
     list_of_already_processed_ribs="geo_processed_ribs.txt"
     list_of_already_processed_prefixes="geo_processed_prefixes.txt"
     prefix_block_geo="prefix_block_geo.txt"
     asn_prefix_geo="asn_prefix_geo.txt"
     unresolved_ips='unresolved_ips.txt'
-    maxmind = MaxMindRepo('/home3/akshah/akshah_cron_bin/latest_maxmind_bin')
+    unused_asprefix='unused_asprefix.txt'
+    maxmind = MaxMindRepo('/home3/akshah/akshah_cron_bin/2016.bin')
     geoDate='201601'
     
     logfilename=None
