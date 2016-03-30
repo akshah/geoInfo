@@ -260,7 +260,8 @@ def runAnalysis(onlyfiles):
             continue
         elements=fn.split('.')
         dataDay=elements[len(elements)-3]
-        filename=dirpath+'/'+fn
+       #filename=dirpath+'/'+fn
+        filename=fn
         logger.print_log("bgpdump on " + filename)
         bashCommand='bgpdump -m '+filename
 
