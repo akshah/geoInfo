@@ -82,7 +82,7 @@ class maxMindDataEngine(object):
     def push2DB(self,data):
         try:
             config = configparser.ConfigParser()
-            config.read('./conf/maxmindDataEngine.conf')
+            config.read('./conf/maxMindDataEngine.conf')
             config.sections()
 
             db = pymysql.connect(host=config['MySQL']['serverIP'],
@@ -146,7 +146,7 @@ class maxMindDataEngine(object):
     def getMaxMindArchiveBinFile(self,day='latest',location='.'):
         try:
             config = configparser.ConfigParser()
-            config.read('./conf/maxmindDataEngine.conf')
+            config.read('./conf/maxMindDataEngine.conf')
             config.sections()
 
             db = pymysql.connect(host=config['MySQL']['serverIP'],
