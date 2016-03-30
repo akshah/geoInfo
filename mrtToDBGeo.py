@@ -5,7 +5,7 @@ from __future__ import print_function
 from collections import defaultdict
 from contextlib import closing
 from multiprocessing import Pool,Process
-from ThreadPool.TPool import TPool
+from customUtilities.processPool import processPool
 import threading
 import ipaddress
 import ast
@@ -311,7 +311,7 @@ def runAnalysis(onlyfiles):
     toProcess=list(toProcessSet)   #Remove Duplicate Prefixes
     logger.print_log('List created. '+str(len(toProcess))+' new prefixes to be processed for '+filename)
     numTh=25
-    inner_pool=TPool(numThreads=numTh)
+    inner_pool=processPool(numThreads=numTh)
     if isTest:
         toProcess=toProcess[:10000]
     retvals=inner_pool.getResultViaThreads(processEachPrefix,toProcess)
