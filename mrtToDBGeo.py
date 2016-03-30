@@ -339,8 +339,8 @@ if __name__ == "__main__":
     asn_prefix_geo="asn_prefix_geo.txt"
     unresolved_ips='unresolved_ips.txt'
     unused_asprefix='unused_asprefix.txt'
-    maxmind = MaxMindRepo('/home3/akshah/akshah_cron_bin/2016.bin')
-    geoDate='201601'
+    maxmind = MaxMindRepo('/home3/akshah/maxmindFiles/20160105_maxmind_bin')
+    geoDate='20160105'
     
     logfilename=None
     dirpath=None
