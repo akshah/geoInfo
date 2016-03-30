@@ -4,6 +4,7 @@
 from __future__ import print_function
 from collections import defaultdict
 from contextlib import closing
+import configparser
 from multiprocessing import Pool,Process
 from customUtilities.processPool import processPool
 import threading
@@ -295,6 +296,7 @@ def runAnalysis(onlyfiles):
             if dataDay not in asnPrefixDict[OriginAS][prefix]:
                 asnPrefixDict[OriginAS][prefix].append(dataDay)
 
+        print_list_of_processed_ribs(filename)
         logger.print_log('Done processing for '+filename)
 
     for oas in asnPrefixDict.keys():
@@ -309,7 +311,7 @@ def runAnalysis(onlyfiles):
                 print_unused_asprefix(keyOriginASprefix)
 
     toProcess=list(toProcessSet)   #Remove Duplicate Prefixes
-    logger.print_log('List created. '+str(len(toProcess))+' new prefixes to be processed for '+filename)
+    #logger.print_log('List created. '+str(len(toProcess))+' new prefixes to be processed for '+filename)
     numTh=25
     inner_pool=processPool(numThreads=numTh)
     if isTest:
@@ -318,7 +320,7 @@ def runAnalysis(onlyfiles):
     dbpush_prefix_block_geo(db)
     dbpush_asn_prefix_geo(db)
     db.commit()
-    print_list_of_processed_ribs(filename)
+
     for entry in toProcess:
         print_list_of_processed_prefixes(entry)
     logger.print_log('Done all processing')
@@ -377,6 +379,16 @@ if __name__ == "__main__":
         for name in files:
             if name.lower().endswith('.gz') or name.lower().endswith('.mrt'):
                 mrtfiles.append(os.path.join(dp, name))
+
+    config = configparser.ConfigParser()
+    config.read('./conf/mrt2db_geo.conf')
+    config.sections()
+
+    db = pymysql.connect(host=config['MySQL']['serverIP'],
+                          port=int(config['MySQL']['serverPort']),
+                          user=config['MySQL']['user'],
+                          passwd=config['MySQL']['password'],
+                          db=config['MySQL']['dbname'])
 
 
     mrtfiles.sort()
