@@ -385,7 +385,7 @@ if __name__ == "__main__":
     mrtfiles=[]
     for dp, dn, files in os.walk(dirpath):
         for name in files:
-            if name.lower().endswith('.gz') or name.lower().endswith('.mrt'):
+            if name.lower().endswith('.gz') or name.lower().endswith('.bz2') or name.lower().endswith('.mrt'):
                 mrtfiles.append(os.path.join(dp, name))
 
     config = configparser.ConfigParser()
