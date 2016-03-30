@@ -305,7 +305,7 @@ def runAnalysis(onlyfiles):
                     continue #Skip this originasn-prefix
                 else:
                     toProcessSet.add(keyOriginASprefix)
-            else
+            else:
                 print_unused_asprefix(keyOriginASprefix)
 
     toProcess=list(toProcessSet)   #Remove Duplicate Prefixes
