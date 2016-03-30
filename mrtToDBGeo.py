@@ -20,7 +20,7 @@ import os
 from os import listdir
 from os.path import isfile, join
 
-from geoInfo import MaxMindRepo
+from geoInfo.MaxMindRepo import MaxMindRepo
 
 def usage(msg="Usage"):
     print(msg)
@@ -110,6 +110,16 @@ def print_list_of_processed_prefixes(asnprefix):
     finally:
         lock.release()
 
+def print_unresolved_ips(prefixHost):
+    lock = threading.RLock()
+    lock.acquire()
+    try:
+        Lfile = open(unresolved_ips,'a+')
+        print(prefixHost,file=Lfile)
+        Lfile.close()
+    finally:
+        lock.release()
+
 
 def getProcessedPrefixes():
     try:
@@ -132,16 +142,17 @@ def dbpush_prefix_block_geo(db):
                 if len(vals) != 3:
                     continue
                 tmp=[]
+                tmp.append(geoDate)
                 tmp.append(vals[0])
                 tmp.append(vals[1])
                 tmp.append(vals[2])
                 data.append(tmp)
             fn.close()
-            cur.executemany("insert into Prefix_Block_Geo(BGP_Prefix,Sub24Block,BlockLocation) values (%s,%s,%s)",data)
+            cur.executemany("insert into BlockGeo(GeoDate,BGPPrefix,Sub24Block,BlockLocation) values (%s,%s,%s,%s)",data)
             db.commit()
                 
         except:
-           raise Exception('Insert to Prefix_Block_Geo Failed')
+           raise Exception('Insert to BlockGeo Failed')
 
 def dbpush_asn_prefix_geo(db): 
     data=[]
@@ -154,15 +165,16 @@ def dbpush_asn_prefix_geo(db):
                 if len(vals) != 3:
                     continue
                 tmp=[]
+                tmp.append(geoDate)
                 tmp.append(vals[0])
                 tmp.append(vals[1])
                 tmp.append(vals[2])
                 data.append(tmp)
             fn.close()
-            cur.executemany("insert into ASN_Prefix_Geo(OriginAS,BGP_Prefix,PrefixLocation) values (%s,%s,%s)",data)
+            cur.executemany("insert into BGPPrefixGeo(GeoDate,OriginAS,BGPPrefix,PrefixLocation) values (%s,%s,%s,%s)",data)
             db.commit()
         except:
-           raise Exception('Insert to ASN_Prefix_Geo Failed')
+           raise Exception('Insert to BGPPrefixGeo Failed')
 
 
 def deleteContent(fName):
@@ -192,17 +204,19 @@ def processEachPrefix(asnprefix):
             allHostsSampled=[]
             numofhosts=len(allHosts)
             #if  numofhosts < 10:
-            indices = random.sample(range(numofhosts),numofhosts)#Pick all IPs
+            #indices = random.sample(range(numofhosts),numofhosts)#Pick all IPs
             #else:
                 #indices = random.sample(range(numofhosts),10)#Pick 10 random IPs at max
             
-            for index in indices:
+            for index in range(0,numofhosts):
                 allHostsSampled.append(allHosts[index])
                         
             #Getting the geolocation
             locations = set()
             for host in allHostsSampled:
                 locations.update(maxmind.ipToCountry(str(host)))
+                if len(locations) == 0:
+                    print_unresolved_ip(prefix+'|'+host)
                 prefix_locations=prefix_locations.union(locations)
             #Write the following to FILE-A    
             tofileA=prefix+"\t"+str(net)+"\t"+str(locations)
@@ -292,12 +306,14 @@ if __name__ == "__main__":
        
     isTest=False
        
-    dbname="testdetoursdb"
+    dbname="geoinfo_archive"
     list_of_already_processed_ribs="geo_processed_ribs.txt"
     list_of_already_processed_prefixes="geo_processed_prefixes.txt"
     prefix_block_geo="prefix_block_geo.txt"
     asn_prefix_geo="asn_prefix_geo.txt"
-    maxmind = MaxMindRepo()#Acquires the lock
+    unresolved_ips='unresolved_ips.txt'
+    maxmind = MaxMindRepo('/home3/akshah/akshah_cron_bin/latest_maxmind_bin')
+    geoDate='201601'
     
     logfilename=None
     dirpath=None
@@ -328,17 +344,22 @@ if __name__ == "__main__":
     processedPrefixes = set(getProcessedPrefixes())
     
     #Read files in the directory given (-d option)
-    onlyfiles = [ f for f in listdir(dirpath) if isfile(join(dirpath,f)) ]
+    #onlyfiles = [ f for f in listdir(dirpath) if isfile(join(dirpath,f)) ]
+    mrtfiles=[]
+    for dp, dn, files in os.walk(dirpath):
+        for name in files:
+            if name.lower().endswith('.gz') or name.lower().endswith('.mrt'):
+                mrtfiles.append(os.path.join(dp, name))
 
- 
+
     #Prepare DB info
     db = pymysql.connect(host="proton.netsec.colostate.edu",
                      user="root", 
                      passwd="*****", 
                     db=dbname)
 
-    onlyfiles.sort()
-    runAnalysis(onlyfiles)
+    mrtfiles.sort()
+    runAnalysis(mrtfiles)
  
     db.close()
 
