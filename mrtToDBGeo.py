@@ -125,7 +125,7 @@ def print_unused_asprefix(asprefix):
     lock = threading.RLock()
     lock.acquire()
     try:
-        Lfile = open(unused_asprefixlatest_m,'a+')
+        Lfile = open(unused_asprefix,'a+')
         print(asprefix,file=Lfile)
         Lfile.close()
     finally:
