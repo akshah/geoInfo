@@ -329,6 +329,7 @@ def runAnalysis(onlyfiles):
 
     toProcess=list(toProcessSet)   #Remove Duplicate Prefixes
     #logger.print_log('List created. '+str(len(toProcess))+' new prefixes to be processed for '+filename)
+    logger.print_log('Performing geolocation lookups.')
     numTh=40
     inner_pool=processPool(numThreads=numTh)
     if isTest:
