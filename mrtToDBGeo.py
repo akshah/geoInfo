@@ -255,7 +255,10 @@ def runAnalysis(onlyfiles):
         deleteContent(prefix_block_geo)
         deleteContent(asn_prefix_geo)
 
-        if fn in processedRibs:
+        ribname=fn.split("/")
+        fnName=ribname[len(ribname)-1]
+
+        if fnName in processedRibs:
             logger.print_log('MRT file '+fn+' was previously processed. Skipping it.')
             continue
         elements=fn.split('.')
@@ -295,15 +298,27 @@ def runAnalysis(onlyfiles):
             if prefix not in asnPrefixDict[OriginAS].keys():
                 asnPrefixDict[OriginAS][prefix]=[]
             if dataDay not in asnPrefixDict[OriginAS][prefix]:
-                asnPrefixDict[OriginAS][prefix].append(dataDay)
+                asnPrefixDict[OriginAS][prefix].append(int(dataDay))
 
         print_list_of_processed_ribs(filename)
         logger.print_log('Done processing for '+filename)
 
     for oas in asnPrefixDict.keys():
         for prf in asnPrefixDict[oas].keys():
-            keyOriginASprefix=oas+"|"+prefix
-            if len(asnPrefixDict[oas][prf]) > 7:
+            keyOriginASprefix=oas+"|"+prf
+            sortedDayList=asnPrefixDict[oas][prf].sort()
+            valCounter=0
+            validOrigin=False
+            for i in range(0,len(sortedDayList)):
+                if(sortedDayList[i+1]==sortedDayList[i]+1:
+                    valCounter+=1
+                    if valCounter => 7:
+                        validOrigin=True
+                        break
+                else:
+                    valCounter=0
+
+            if validOrigin:
                 if keyOriginASprefix in processedPrefixes:
                     continue #Skip this originasn-prefix
                 else:
