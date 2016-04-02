@@ -329,7 +329,7 @@ def runAnalysis(onlyfiles):
 
     toProcess=list(toProcessSet)   #Remove Duplicate Prefixes
     #logger.print_log('List created. '+str(len(toProcess))+' new prefixes to be processed for '+filename)
-    numTh=25
+    numTh=40
     inner_pool=processPool(numThreads=numTh)
     if isTest:
         toProcess=toProcess[:10000]
