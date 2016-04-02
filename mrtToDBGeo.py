@@ -306,7 +306,7 @@ def runAnalysis(onlyfiles):
     for oas in asnPrefixDict.keys():
         for prf in asnPrefixDict[oas].keys():
             keyOriginASprefix=oas+"|"+prf
-            sortedDayList=asnPrefixDict[oas][prf].sort()
+            sortedDayList=sorted(asnPrefixDict[oas][prf])
             valCounter=0
             validOrigin=False
             for i in range(0,len(sortedDayList)):
