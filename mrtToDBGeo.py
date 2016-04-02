@@ -111,7 +111,7 @@ def print_list_of_processed_prefixes(asnprefix):
     finally:
         lock.release()
 
-def print_unresolved_ips(prefixHost):
+def print_unresolved_ip(prefixHost):
     lock = threading.RLock()
     lock.acquire()
     try:
