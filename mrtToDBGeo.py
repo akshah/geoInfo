@@ -312,7 +312,7 @@ def runAnalysis(onlyfiles):
             for i in range(0,len(sortedDayList)-1):
                 if(sortedDayList[i+1]==sortedDayList[i]+1):
                     valCounter+=1
-                    if valCounter >= 3:
+                    if valCounter >= 1:
                         validOrigin=True
                         break
                 else:
