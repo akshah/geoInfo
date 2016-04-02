@@ -310,7 +310,7 @@ def runAnalysis(onlyfiles):
             valCounter=0
             validOrigin=False
             for i in range(0,len(sortedDayList)):
-                if(sortedDayList[i+1]==sortedDayList[i]+1:
+                if(sortedDayList[i+1]==sortedDayList[i]+1):
                     valCounter+=1
                     if valCounter => 7:
                         validOrigin=True
