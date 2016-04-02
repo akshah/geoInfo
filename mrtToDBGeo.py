@@ -227,7 +227,7 @@ def processEachPrefix(asnprefix):
             for host in allHostsSampled:
                 locations.update(maxmind.ipToCountry(str(host)))
                 if len(locations) == 0:
-                    print_unresolved_ip(prefix+'|'+host)
+                    print_unresolved_ip(prefix+'|'+str(host))
                 prefix_locations=prefix_locations.union(locations)
             #Write the following to FILE-A
             tofileA=prefix+"\t"+str(net)+"\t"+str(locations)
