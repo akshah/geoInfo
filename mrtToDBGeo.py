@@ -306,19 +306,20 @@ def runAnalysis(onlyfiles):
     for oas in asnPrefixDict.keys():
         for prf in asnPrefixDict[oas].keys():
             keyOriginASprefix=oas+"|"+prf
-            sortedDayList=sorted(asnPrefixDict[oas][prf])
-            valCounter=0
-            validOrigin=False
-            for i in range(0,len(sortedDayList)-1):
-                if(sortedDayList[i+1]==sortedDayList[i]+1):
-                    valCounter+=1
-                    if valCounter >= 1:
-                        validOrigin=True
-                        break
-                else:
-                    valCounter=0
 
-            if validOrigin:
+            #sortedDayList=sorted(asnPrefixDict[oas][prf])
+            #valCounter=0
+            #validOrigin=False
+            #for i in range(0,len(sortedDayList)-1):
+            #    if(sortedDayList[i+1]==sortedDayList[i]+1):
+            #        valCounter+=1
+            #        if valCounter >= 1:
+            #            validOrigin=True
+            #            break
+            #    else:
+            #        valCounter=0
+
+            if len(asnPrefixDict[oas][prf]) >=15:
                 if keyOriginASprefix in processedPrefixes:
                     continue #Skip this originasn-prefix
                 else:
