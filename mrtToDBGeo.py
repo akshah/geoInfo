@@ -322,7 +322,11 @@ def runAnalysis(onlyfiles):
             #    else:
             #        valCounter=0
 
-            if len(asnPrefixDict[oas][prf]) >=15:
+            minDaysPrefixAnnounced=15
+            if isTest:
+                minDaysPrefixAnnounced=1
+
+            if len(asnPrefixDict[oas][prf]) >=minDaysPrefixAnnounced:
                 if keyOriginASprefix in processedPrefixes:
                     continue #Skip this originasn-prefix
                 else:
