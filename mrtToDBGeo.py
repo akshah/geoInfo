@@ -224,7 +224,7 @@ def processEachPrefix(asnprefix):
 
             #Getting the geolocation
             locations = set()
-            for host in allHostsSampled:
+            for host in allHostsSampled[:10]:
                 locations.update(maxmind.ipToCountry(str(host)))
                 if len(locations) == 0:
                     print_unresolved_ip(prefix+'|'+str(host))
