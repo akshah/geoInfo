@@ -222,9 +222,12 @@ def processEachPrefix(asnprefix):
             for index in range(0,numofhosts):
                 allHostsSampled.append(allHosts[index])
 
+            if isTest:
+                allHostsSampled=allHosts[:10]
+
             #Getting the geolocation
             locations = set()
-            for host in allHostsSampled[:10]:
+            for host in allHostsSampled:
                 locations.update(maxmind.ipToCountry(str(host)))
                 if len(locations) == 0:
                     print_unresolved_ip(prefix+'|'+str(host))
@@ -350,7 +353,7 @@ if __name__ == "__main__":
         print("ERROR: Please use python3.")
         exit(0)
 
-    isTest=False
+    isTest=True
 
     #dbname="geoinfo_archive"
     list_of_already_processed_ribs="geo_processed_ribs.txt"
