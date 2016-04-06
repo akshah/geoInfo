@@ -194,7 +194,7 @@ def dbpush_prefix_block_geo(db):
                         continue
                     except:
                         traceback.print_exc()
-                        print('Error in Updating geolocation')
+                        logger.print_log('Error in Updating geolocation')
                         exit(0)
                     # data.append(tmp)
             fn.close()
@@ -222,10 +222,41 @@ def dbpush_asn_prefix_geo(db):
                 tmp.append(vals[0])
                 tmp.append(vals[1])
                 tmp.append(vals[2])
-                data.append(tmp)
+                try:
+                    cur.execute("insert into BGPPrefixGeo(GeoDate,OriginAS,BGPPrefix,PrefixLocation) values (%s,%s,%s,%s)",tmp)
+                except pymysql.IntegrityError:
+                    # We have seen this GeoDate, BGPPrefix, Sub24Block before
+                    try:
+                        print('select PrefixLocation from BGPPrefixGeo where GeoDate = "{0}" and OriginAS = "{1}" and BGPPrefix = "{2}"'.format(
+                                geoDate, vals[1], vals[2]))
+                        cur.execute(
+                            'select PrefixLocation from BGPPrefixGeo where GeoDate = "{0}" and OriginAS = "{1}" and BGPPrefix = "{2}"'.format(
+                                geoDate, vals[1], vals[2]))
+                        row = cur.fetchone()
+                        if row is not None:
+                            location = set()
+                            countries = re.sub('[{}]', '', row[0])
+                            tmpSet = countries.split(',')
+                            for entry in tmpSet:
+                                et = re.sub('[\"|\'| ]', '', entry)
+                                location.add(et)
+                            currentLocations = re.sub('[{}]', '', vals[2]).split(',')
+                            for entry in currentLocations:
+                                et = re.sub('[\"|\'| ]', '', entry)
+                                location.add(et)
+                            cur.execute(
+                                "update BGPPrefixGeo set PrefixLocation='{0}' where GeoDate = '{1}' and OriginAS = '{2}' and BGPPrefix = '{3}'".format(
+                                    location, geoDate, vals[1], vals[2]))
+                        continue
+                    except:
+                        traceback.print_exc()
+                        logger.print_log('Error in Updating geolocation for prefix')
+                        exit(0)
+
+
+                #data.append(tmp)
             fn.close()
-            cur.executemany("insert into BGPPrefixGeo(GeoDate,OriginAS,BGPPrefix,PrefixLocation) values (%s,%s,%s,%s)",
-                            data)
+            #cur.executemany("insert into BGPPrefixGeo(GeoDate,OriginAS,BGPPrefix,PrefixLocation) values (%s,%s,%s,%s)", data)
             db.commit()
         except:
             raise Exception('Insert to BGPPrefixGeo Failed')
