@@ -298,12 +298,13 @@ def processEachPrefix(asnprefix):
         if isTest:
             allHostsSampled = allHosts[:10]
 
+        if(str(net)=='5.11.11.1/32'):
+            print('Found: 5.11.11.1/32')
+            print(allHostsSampled)
+
         # Getting the geolocation
         locations = set()
         for host in allHostsSampled:
-            if(str(net)=='5.11.11.1/32'):
-                print('Found: 5.11.11.1/32')
-                print(host)
             locations.update(maxmind.ipToCountry(str(host)))
             if len(locations) == 0:
                 print_unresolved_ip(prefix + '|' + str(host))
