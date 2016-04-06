@@ -145,7 +145,6 @@ def getProcessedPrefixes():
 
 def dbpush_prefix_block_geo(db):
     data=[]
-    print('In DB push')
     with closing( db.cursor() ) as cur:
         try:
             fn=open(prefix_block_geo)
@@ -433,8 +432,7 @@ if __name__ == "__main__":
 
     mrtfiles.sort()
     #print(mrtfiles)
-    #runAnalysis(mrtfiles)
-    dbpush_prefix_block_geo(db)
+    runAnalysis(mrtfiles)
 
 
     end_time,_=current_time()
