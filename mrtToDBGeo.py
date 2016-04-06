@@ -193,6 +193,7 @@ def dbpush_prefix_block_geo(db):
                     except:
                         traceback.print_exc()
                         print('Error in Updating geolocation')
+                        exit(0)
                     # data.append(tmp)
             fn.close()
             # cur.executemany("insert into BlockGeo(GeoDate,BGPPrefix,Sub24Block,BlockLocation) values (%s,%s,%s,%s)",data)
