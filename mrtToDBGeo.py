@@ -145,6 +145,7 @@ def getProcessedPrefixes():
 
 def dbpush_prefix_block_geo(db):
     data=[]
+    print('In DB push')
     with closing( db.cursor() ) as cur:
         try:
             fn=open(prefix_block_geo)
@@ -153,7 +154,6 @@ def dbpush_prefix_block_geo(db):
                 vals=line.split("\t")
                 if len(vals) != 3:
                     continue
-                print(line)
                 tmp=[]
                 tmp.append(geoDate)
                 tmp.append(vals[0])
