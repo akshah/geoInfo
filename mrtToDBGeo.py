@@ -284,8 +284,8 @@ def processEachPrefix(asnprefix):
     prefix_locations = set()
     for net in all24:
         allHosts = list(net.hosts())
-        if(str(net)=='5.11.11.1/32'):
-            print(allHosts)
+        if(net.prefixlen==32):
+            allHosts=list(net.network_address)
         indices = []
         allHostsSampled = []
         numofhosts = len(allHosts)
