@@ -158,10 +158,14 @@ def dbpush_prefix_block_geo(db):
                 tmp.append(vals[0])
                 tmp.append(vals[1])
                 tmp.append(vals[2])
-                data.append(tmp)
+                cur.execute("insert into BlockGeo(GeoDate,BGPPrefix,Sub24Block,BlockLocation) values (%s,%s,%s,%s)",tmp)
+                #data.append(tmp)
             fn.close()
-            cur.executemany("insert into BlockGeo(GeoDate,BGPPrefix,Sub24Block,BlockLocation) values (%s,%s,%s,%s)",data)
+            #cur.executemany("insert into BlockGeo(GeoDate,BGPPrefix,Sub24Block,BlockLocation) values (%s,%s,%s,%s)",data)
             db.commit()
+        except pymysql.IntegrityError:
+            print('Integrity Error!')
+            exit(0)
 
         except:
             traceback.print_exc()
@@ -428,7 +432,8 @@ if __name__ == "__main__":
 
     mrtfiles.sort()
     #print(mrtfiles)
-    runAnalysis(mrtfiles)
+    #runAnalysis(mrtfiles)
+    dbpush_prefix_block_geo(db)
 
 
     end_time,_=current_time()
