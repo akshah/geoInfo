@@ -171,8 +171,10 @@ def dbpush_prefix_block_geo(db):
                 except pymysql.IntegrityError:
                     # We have seen this GeoDate, BGPPrefix, Sub24Block before
                     try:
+                        print('select BlockLocation from BlockGeo where GeoDate = "{0}" and BGPPrefix = "{1}" and Sub24Block = "{2}"'.format(
+                                geoDate, vals[1], vals[2]))
                         cur.execute(
-                            "select BlockLocation from BlockGeo where GeoDate = '{0}' and BGPPrefix = '{1}' and Sub24Block = '{2}'".format(
+                            'select BlockLocation from BlockGeo where GeoDate = "{0}" and BGPPrefix = "{1}" and Sub24Block = "{2}"'.format(
                                 geoDate, vals[1], vals[2]))
                         row = cur.fetchone()
                         if row is not None:
