@@ -443,10 +443,10 @@ if __name__ == "__main__":
     f = open(asn_prefix_geo, 'w')
     f.close()
     unresolved_ips = 'unresolved_ips.txt'
-    f = open(unresolved_ips, 'a')
+    f = open(unresolved_ips, 'a+')
     f.close()
     unused_asprefix = 'unused_asprefix.txt'
-    f = open(unused_asprefix, 'a')
+    f = open(unused_asprefix, 'a+')
     f.close()
     maxmind = MaxMindRepo('/home3/akshah/maxmindFiles/20160105_maxmind_bin')
     geoDate = '20160105'
