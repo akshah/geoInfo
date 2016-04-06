@@ -284,6 +284,8 @@ def processEachPrefix(asnprefix):
     prefix_locations = set()
     for net in all24:
         allHosts = list(net.hosts())
+        if(str(net)=='5.11.11.1/32'):
+            print(allHosts)
         indices = []
         allHostsSampled = []
         numofhosts = len(allHosts)
@@ -297,10 +299,6 @@ def processEachPrefix(asnprefix):
 
         if isTest:
             allHostsSampled = allHosts[:10]
-
-        if(str(net)=='5.11.11.1/32'):
-            print('Found: 5.11.11.1/32')
-            print(allHostsSampled)
 
         # Getting the geolocation
         locations = set()
