@@ -171,7 +171,7 @@ def dbpush_prefix_block_geo(db):
                 except pymysql.IntegrityError:
                     # We have seen this GeoDate, BGPPrefix, Sub24Block before
                     try:
-                        print('select BlockLocation from BlockGeo where GeoDate = "{0}" and BGPPrefix = "{1}" and Sub24Block = "{2}"'.format(
+                        #print('select BlockLocation from BlockGeo where GeoDate = "{0}" and BGPPrefix = "{1}" and Sub24Block = "{2}"'.format(
                                 geoDate, vals[1], vals[2]))
                         cur.execute(
                             'select BlockLocation from BlockGeo where GeoDate = "{0}" and BGPPrefix = "{1}" and Sub24Block = "{2}"'.format(
@@ -227,7 +227,7 @@ def dbpush_asn_prefix_geo(db):
                 except pymysql.IntegrityError:
                     # We have seen this GeoDate, BGPPrefix, Sub24Block before
                     try:
-                        print('select PrefixLocation from BGPPrefixGeo where GeoDate = "{0}" and OriginAS = "{1}" and BGPPrefix = "{2}"'.format(
+                        #print('select PrefixLocation from BGPPrefixGeo where GeoDate = "{0}" and OriginAS = "{1}" and BGPPrefix = "{2}"'.format(
                                 geoDate, vals[1], vals[2]))
                         cur.execute(
                             'select PrefixLocation from BGPPrefixGeo where GeoDate = "{0}" and OriginAS = "{1}" and BGPPrefix = "{2}"'.format(
