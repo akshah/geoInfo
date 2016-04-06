@@ -283,7 +283,7 @@ def processEachPrefix(asnprefix):
     all24 = [network] if network.prefixlen >= 24 else network.subnets(new_prefix=24)
     prefix_locations = set()
     for net in all24:
-        # print(str(net))
+        print(str(net))
         allHosts = list(net.hosts())
         indices = []
         allHostsSampled = []
