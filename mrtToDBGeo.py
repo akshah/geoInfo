@@ -283,8 +283,6 @@ def processEachPrefix(asnprefix):
     all24 = [network] if network.prefixlen >= 24 else network.subnets(new_prefix=24)
     prefix_locations = set()
     for net in all24:
-        if(str(net)=='5.11.11.1/32'):
-            print('Found: 5.11.11.1/32')
         allHosts = list(net.hosts())
         indices = []
         allHostsSampled = []
@@ -303,6 +301,9 @@ def processEachPrefix(asnprefix):
         # Getting the geolocation
         locations = set()
         for host in allHostsSampled:
+            if(str(net)=='5.11.11.1/32'):
+                print('Found: 5.11.11.1/32')
+                print(host)
             locations.update(maxmind.ipToCountry(str(host)))
             if len(locations) == 0:
                 print_unresolved_ip(prefix + '|' + str(host))
