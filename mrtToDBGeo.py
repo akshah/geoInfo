@@ -153,6 +153,7 @@ def dbpush_prefix_block_geo(db):
                 vals=line.split("\t")
                 if len(vals) != 3:
                     continue
+                print(line)
                 tmp=[]
                 tmp.append(geoDate)
                 tmp.append(vals[0])
