@@ -162,7 +162,7 @@ def dbpush_prefix_block_geo(db):
                     cur.execute("insert into BlockGeo(GeoDate,BGPPrefix,Sub24Block,BlockLocation) values (%s,%s,%s,%s)",tmp)
                 except pymysql.IntegrityError:
                     #We have seen this GeoDate, BGPPrefix, Sub24Block before
-                    cur.execute("select BlockLocation from BlockGeo where GeoDate = {0} and BGPPrefix = {1} and Sub24Block = {2}".format(geoDate,vals[1],vals[2]))
+                    cur.execute("select BlockLocation from BlockGeo where GeoDate = '{0}' and BGPPrefix = '{1}' and Sub24Block = '{2}'".format(geoDate,vals[1],vals[2]))
                     row=cur.fetchone()
                     if row is not None:
                         location=set()
@@ -175,7 +175,7 @@ def dbpush_prefix_block_geo(db):
                         for entry in currentLocations:
                            et=re.sub('[\"|\'| ]','',entry)
                            location.add(et)
-                        cur.execute("update BlockGeo set BlockLocation={0} where GeoDate = {1} and BGPPrefix = {2} and Sub24Block = {3}".format(location,geoDate,vals[1],vals[2]))
+                        cur.execute("update BlockGeo set BlockLocation='{0}' where GeoDate = '{1}' and BGPPrefix = '{2}' and Sub24Block = '{3}'".format(location,geoDate,vals[1],vals[2]))
                     continue
                 #data.append(tmp)
             fn.close()
