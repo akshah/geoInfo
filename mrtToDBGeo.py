@@ -434,7 +434,7 @@ if __name__ == "__main__":
         print("ERROR: Please use python3.")
         exit(0)
 
-    isTest = True
+    isTest = False
 
     # dbname="geoinfo_archive"
     list_of_already_processed_ribs = "geo_processed_ribs.txt"
