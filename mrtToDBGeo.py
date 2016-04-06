@@ -158,14 +158,30 @@ def dbpush_prefix_block_geo(db):
                 tmp.append(vals[0])
                 tmp.append(vals[1])
                 tmp.append(vals[2])
-                cur.execute("insert into BlockGeo(GeoDate,BGPPrefix,Sub24Block,BlockLocation) values (%s,%s,%s,%s)",tmp)
+                try:
+                    cur.execute("insert into BlockGeo(GeoDate,BGPPrefix,Sub24Block,BlockLocation) values (%s,%s,%s,%s)",tmp)
+                except pymysql.IntegrityError:
+                    #We have seen this GeoDate, BGPPrefix, Sub24Block before
+                    cur.execute("select BlockLocation from BlockGeo where GeoDate = {0} and BGPPrefix = {1} and Sub24Block = {2}".format(geoDate,vals[1],vals[2]))
+                    row=cur.fetchone()
+                    if row is not None:
+                        location=set()
+                        countries=re.sub('[{}]','',row[0])
+                        tmpSet=countries.split(',')
+                        for entry in tmpSet:
+                           et=re.sub('[\"|\'| ]','',entry)
+                           location.add(et)
+                        currentLocations=re.sub('[{}]','',vals[2]).split(',')
+                        for entry in currentLocations:
+                           et=re.sub('[\"|\'| ]','',entry)
+                           location.add(et)
+                        cur.execute("update BlockGeo set BlockLocation={0} where GeoDate = {1} and BGPPrefix = {2} and Sub24Block = {3}".format(location,geoDate,vals[1],vals[2]))
+                    continue
                 #data.append(tmp)
             fn.close()
             #cur.executemany("insert into BlockGeo(GeoDate,BGPPrefix,Sub24Block,BlockLocation) values (%s,%s,%s,%s)",data)
             db.commit()
-        except pymysql.IntegrityError:
-            print('Integrity Error!')
-            exit(0)
+
 
         except:
             traceback.print_exc()
