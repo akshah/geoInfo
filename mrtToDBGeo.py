@@ -287,7 +287,7 @@ def processEachPrefix(asnprefix):
             continue
         allHosts = list(net.hosts())
         if(net.prefixlen==32):
-            allHosts=list(net.network_address)
+            allHosts.append(net.network_address)
         indices = []
         allHostsSampled = []
         numofhosts = len(allHosts)
