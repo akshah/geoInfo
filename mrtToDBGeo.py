@@ -20,6 +20,7 @@ import sys
 import os
 from os import listdir
 from os.path import isfile, join
+import traceback
 
 from geoInfo.MaxMindRepo import MaxMindRepo
 
@@ -163,7 +164,8 @@ def dbpush_prefix_block_geo(db):
             db.commit()
 
         except:
-           raise Exception('Insert to BlockGeo Failed')
+            traceback.print_exc()
+            raise Exception('Insert to BlockGeo Failed')
 
 def dbpush_asn_prefix_geo(db):
     data=[]
