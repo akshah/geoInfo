@@ -279,12 +279,12 @@ def processEachPrefix(asnprefix):
         return
 
     network = ipaddress.IPv4Network(prefix)
+    if network.is_private:
+        return
 
     all24 = [network] if network.prefixlen >= 24 else network.subnets(new_prefix=24)
     prefix_locations = set()
     for net in all24:
-        if net.is_private:
-            continue
         allHosts = list(net.hosts())
         if(net.prefixlen==32):
             allHosts.append(net.network_address)
