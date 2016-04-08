@@ -2,30 +2,16 @@
 
 
 from __future__ import print_function
-from collections import defaultdict
 from contextlib import closing
-from multiprocessing import Pool,Process
 
-from ASPaths.ASPath import ASPath
-from ASPaths.DeepPathAnalysis import DeepPathAnalysis
-
-from ThreadPool.TPool import TPool
 import threading
-import ipaddress
-import ast
-import random
+import configparser
 import re
-import signal,time
-import subprocess
+
 import getopt
 import time
 import pymysql
 import sys
-import os
-from os import listdir
-from os.path import isfile, join
-
-from Country_Info.MaxMindRepo import MaxMindRepo
 
 def usage(msg="Usage"):
     print(msg)
@@ -62,7 +48,7 @@ def dbpush_asn_geo(db,asn,location):
     #print("In dbpush_asn_geo")
     with closing( db.cursor() ) as cur: 
         try:
-            cur.execute("select ASNLocation from {0}.{1} where ASN = {2}".format(dbname,'ASN_Geo',asn))
+            cur.execute("select ASNLocation from ASNGeo where ASN = {0} where GeoDate={1}".format(asn,geoDate))
             row=cur.fetchone()
             if row is not None: #We have seen this ASN before 
                 countries=re.sub('[{}]','',row[0])
@@ -71,15 +57,15 @@ def dbpush_asn_geo(db,asn,location):
                    et=re.sub('[\"|\'| ]','',entry)
                    location.add(et)
             print(str(location))
-            cur.execute("insert into ASN_Geo(ASN,ASNLocation) values (%s,%s)",(asn,str(location)))    
+            cur.execute("insert into ASNGeo(GeoDate,ASN,ASNLocation) values (%s,%s,%s)",(geoDate,asn,str(location)))
         except:
-           raise Exception('Insert to ASN_Geo Failed')
+           raise Exception('Insert to ASNGeo Failed')
 
 def query_get_distinct_asn(db):
     with closing( db.cursor() ) as cur:
         toReturn=[]
         try:
-            cur.execute("SELECT distinct OriginAS FROM {0}.{1}".format(dbname,'ASN_Prefix_Geo'))
+            cur.execute("SELECT distinct OriginAS FROM BGPPrefixGeo where GeoDate= {0}".format(geoDate))
             row=cur.fetchone()
             while row is not None:
                 if '}' not in row[0] and '{' not in row[0]: #We will ignore Group of Origin ASes 
@@ -99,7 +85,7 @@ def query_asn_locations(db,asn):
     with closing( db.cursor() ) as cur:
         toReturn=set()
         try:
-            cur.execute('SELECT distinct PrefixLocation FROM {0}.{1} WHERE OriginAS = "{2}"'.format(dbname,'ASN_Prefix_Geo',asn))
+            cur.execute('SELECT distinct PrefixLocation FROM BGPPrefixGeo WHERE OriginAS = "{0}" and GeoDate={1}'.format(asn,geoDate))
             row=cur.fetchone()
             while row is not None:
                 countries=re.sub('[{}]','',row[0])
