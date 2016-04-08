@@ -137,12 +137,12 @@ def runAnalysis():
             thisASLoc=set()
             thisASLoc=query_asn_locations(db,ASN)
             #print(ASN,str(thisASLoc))
-            if thisASLoc is False:
-                print_to_processed_list(ASN)
-            else:
-                dbpush_asn_geo(db,ASN,thisASLoc)
-                print_to_processed_list(ASN)
-                db.commit()
+            #if thisASLoc is False:
+            #    print_to_processed_list(ASN)
+            #else:
+            dbpush_asn_geo(db,ASN,thisASLoc)
+            print_to_processed_list(ASN)
+            db.commit()
             
         
 if __name__ == "__main__":
@@ -153,7 +153,9 @@ if __name__ == "__main__":
         exit(0)
        
     isTest=False
-       
+
+    geoDate="20150105"
+
     config = configparser.ConfigParser()
     config.read('./conf/mrt2db_geo.conf')
     config.sections()
