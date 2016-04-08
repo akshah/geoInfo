@@ -48,7 +48,7 @@ def dbpush_asn_geo(db,asn,location):
     #print("In dbpush_asn_geo")
     with closing( db.cursor() ) as cur: 
         try:
-            cur.execute("select ASNLocation from ASNGeo where ASN = '{0}' where GeoDate='{1}'".format(asn,geoDate))
+            cur.execute("select ASNLocation from ASNGeo where ASN = '{0}' and GeoDate='{1}'".format(asn,geoDate))
             row=cur.fetchone()
             if row is not None: #We have seen this ASN before 
                 countries=re.sub('[{}]','',row[0])
