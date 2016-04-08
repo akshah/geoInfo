@@ -106,7 +106,7 @@ def query_asn_locations(db,asn):
         if toReturn:
             return toReturn
         else:
-            return False
+            return "set()"
      
 def getProcessedASN():
     try:
