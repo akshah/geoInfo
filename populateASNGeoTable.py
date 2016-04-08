@@ -121,52 +121,6 @@ def query_asn_locations(db,asn):
             return toReturn
         else:
             return False
-
-            
-def processEachPrefix(asnprefix):
-        vals=asnprefix.split('|')
-        OriginAS=vals[0]
-        prefix=vals[1]            
-        toPushA =[]
-        toPushB =[]
-        NULL=None
-        #Get all /24s for the Prefix
-        if prefix == '0.0.0.0/0':
-            return
-        
-        network = ipaddress.IPv4Network(prefix)
-        
-        all24 = [network] if network.prefixlen >= 24 else network.subnets(new_prefix=24)
-        prefix_locations = set()
-        for net in all24:
-            #print(str(net))
-            allHosts = list(net.hosts())
-            indices=[]
-            allHostsSampled=[]
-            numofhosts=len(allHosts)
-            if  numofhosts < 10:
-                indices = random.sample(range(numofhosts),numofhosts)#Pick random IPs
-            else:
-                indices = random.sample(range(numofhosts),10)#Pick 10 random IPs at max
-            
-            for index in indices:
-                allHostsSampled.append(allHosts[index])
-                        
-            #Getting the geolocation
-            locations = set()
-            for host in allHostsSampled:
-                locations.update(maxmind.ipToCountry(str(host)))
-                prefix_locations=prefix_locations.union(locations)
-            #Write the following to FILE-A    
-            tofileA=prefix+"\t"+str(net)+"\t"+str(locations)
-            toPushA.append(tofileA)
-        
-        #Write the following to FILE-B
-        tofileB=OriginAS+"\t"+prefix+"\t"+str(prefix_locations)
-        toPushB.append(tofileB)
-             
-        writeObj.write_prefix_block_geo(toPushA)
-        writeObj.write_asn_prefix_geo(toPushB)
      
 def getProcessedASN():
     try:
