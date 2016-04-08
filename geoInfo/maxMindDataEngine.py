@@ -182,11 +182,16 @@ class maxMindDataEngine(object):
             
     def maxMindArchiveDates(self):
         try:
-            #Prepare DB info
-            db = pymysql.connect(host="proton.netsec.colostate.edu",
-                     user="root", 
-                     passwd="****", 
-                    db='maxmind_archive')
+            config = configparser.ConfigParser()
+            config.read('./conf/maxMindDataEngine.conf')
+            config.sections()
+
+            db = pymysql.connect(host=config['MySQL']['serverIP'],
+                                      port=int(config['MySQL']['serverPort']),
+                                      user=config['MySQL']['user'],
+                                      passwd=config['MySQL']['password'],
+                                      db=config['MySQL']['dbname'])
+
             dates=[]
             with closing( db.cursor() ) as cur: 
                 try:
