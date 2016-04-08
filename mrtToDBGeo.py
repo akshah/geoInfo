@@ -434,25 +434,6 @@ if __name__ == "__main__":
         print("ERROR: Please use python3.")
         exit(0)
 
-    isTest = False
-
-    # dbname="geoinfo_archive"
-    list_of_already_processed_ribs = "geo_processed_ribs.txt"
-    list_of_already_processed_prefixes = "geo_processed_prefixes.txt"
-    prefix_block_geo = "prefix_block_geo.txt"
-    f = open(prefix_block_geo, 'w')
-    f.close()
-    asn_prefix_geo = "asn_prefix_geo.txt"
-    f = open(asn_prefix_geo, 'w')
-    f.close()
-    unresolved_ips = 'unresolved_ips.txt'
-    f = open(unresolved_ips, 'a+')
-    f.close()
-    unused_asprefix = 'unused_asprefix.txt'
-    f = open(unused_asprefix, 'a+')
-    f.close()
-    maxmind = MaxMindRepo('/home3/akshah/maxmindFiles/20160105_maxmind_bin')
-    geoDate = '20160105'
 
     logfilename = None
     dirpath = None
@@ -473,11 +454,53 @@ if __name__ == "__main__":
     if not dirpath:
         usage('Missing directory to read ASN|Prefix from')
 
+    config = configparser.ConfigParser()
+    config.read('./conf/mrt2db_geo.conf')
+    config.sections()
+
+    db = pymysql.connect(host=config['MySQL']['serverIP'],
+                         port=int(config['MySQL']['serverPort']),
+                         user=config['MySQL']['user'],
+                         passwd=config['MySQL']['password'],
+                         db=config['MySQL']['dbname'])
+
+    # dbname="geoinfo_archive"
+    list_of_already_processed_ribs = "geo_processed_ribs.txt"
+    list_of_already_processed_prefixes = "geo_processed_prefixes.txt"
+    prefix_block_geo = "prefix_block_geo.txt"
+    f = open(prefix_block_geo, 'a+')
+    f.close()
+    asn_prefix_geo = "asn_prefix_geo.txt"
+    f = open(asn_prefix_geo, 'a+')
+    f.close()
+    unresolved_ips = 'unresolved_ips.txt'
+    f = open(unresolved_ips, 'a+')
+    f.close()
+    unused_asprefix = 'unused_asprefix.txt'
+    f = open(unused_asprefix, 'a+')
+    f.close()
+    maxmind = MaxMindRepo('/home3/akshah/maxmindFiles/20160105_maxmind_bin')
+    geoDate = '20160105'
+
     # Logger
     if not logfilename:
         scriptname = sys.argv[0].split('.')
         logfilename = scriptname[0] + '.log'
     logger = Logger(logfilename)
+
+    isTest = False
+    localPush=True
+
+    if localPush:
+        logger.print_log('Pushing local file(s)')
+        dbpush_prefix_block_geo(db)
+        dbpush_asn_prefix_geo(db)
+        db.commit()
+        db.close()
+        logger.print_log('Finished pushing local file(s)!')
+        exit(0)
+
+
     writeObj = writeToDisk()
     # Get list prefixes that were processed before, if any
     processedPrefixes = set(getProcessedPrefixes())
@@ -490,19 +513,11 @@ if __name__ == "__main__":
             if name.lower().endswith('.gz') or name.lower().endswith('.bz2') or name.lower().endswith('.mrt'):
                 mrtfiles.append(os.path.join(dp, name))
 
-    config = configparser.ConfigParser()
-    config.read('./conf/mrt2db_geo.conf')
-    config.sections()
-
-    db = pymysql.connect(host=config['MySQL']['serverIP'],
-                         port=int(config['MySQL']['serverPort']),
-                         user=config['MySQL']['user'],
-                         passwd=config['MySQL']['password'],
-                         db=config['MySQL']['dbname'])
 
     mrtfiles.sort()
-    # print(mrtfiles)
     runAnalysis(mrtfiles)
+
+    db.close()
 
     end_time, _ = current_time()
     logger.print_log('Finished processing in ' + str(int((end_time - start_time) / 60)) + ' minutes and ' + str(
