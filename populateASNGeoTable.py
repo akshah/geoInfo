@@ -214,7 +214,15 @@ if __name__ == "__main__":
        
     isTest=False
        
-    dbname="testdetoursdb"
+    config = configparser.ConfigParser()
+    config.read('./conf/mrt2db_geo.conf')
+    config.sections()
+
+    db = pymysql.connect(host=config['MySQL']['serverIP'],
+                         port=int(config['MySQL']['serverPort']),
+                         user=config['MySQL']['user'],
+                         passwd=config['MySQL']['password'],
+                         db=config['MySQL']['dbname'])
     
     logfilename=None
 
@@ -238,12 +246,6 @@ if __name__ == "__main__":
     
     list_of_already_processed_ASN="geo_processed_ASN.txt"
     processedASN = set(getProcessedASN())
-    
-    #Prepare DB info
-    db = pymysql.connect(host="proton.netsec.colostate.edu",
-                     user="root", 
-                     passwd="n3ts3cm5q1", 
-                    db=dbname)
 
     runAnalysis()
  
