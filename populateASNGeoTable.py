@@ -48,7 +48,7 @@ def dbpush_asn_geo(db,asn,location):
     #print("In dbpush_asn_geo")
     with closing( db.cursor() ) as cur: 
         try:
-            cur.execute("select ASNLocation from ASNGeo where ASN = {0} where GeoDate={1}".format(asn,geoDate))
+            cur.execute("select ASNLocation from ASNGeo where ASN = '{0}' where GeoDate='{1}'".format(asn,geoDate))
             row=cur.fetchone()
             if row is not None: #We have seen this ASN before 
                 countries=re.sub('[{}]','',row[0])
@@ -65,7 +65,7 @@ def query_get_distinct_asn(db):
     with closing( db.cursor() ) as cur:
         toReturn=[]
         try:
-            cur.execute("SELECT distinct OriginAS FROM BGPPrefixGeo where GeoDate= {0}".format(geoDate))
+            cur.execute("SELECT distinct OriginAS FROM BGPPrefixGeo where GeoDate= '{0}'".format(geoDate))
             row=cur.fetchone()
             while row is not None:
                 if '}' not in row[0] and '{' not in row[0]: #We will ignore Group of Origin ASes 
@@ -85,7 +85,7 @@ def query_asn_locations(db,asn):
     with closing( db.cursor() ) as cur:
         toReturn=set()
         try:
-            cur.execute('SELECT distinct PrefixLocation FROM BGPPrefixGeo WHERE OriginAS = "{0}" and GeoDate={1}'.format(asn,geoDate))
+            cur.execute('SELECT distinct PrefixLocation FROM BGPPrefixGeo WHERE OriginAS = "{0}" and GeoDate="{1}"'.format(asn,geoDate))
             row=cur.fetchone()
             while row is not None:
                 countries=re.sub('[{}]','',row[0])
