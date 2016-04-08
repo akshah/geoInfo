@@ -154,7 +154,7 @@ if __name__ == "__main__":
        
     isTest=False
 
-    geoDate="20150105"
+    geoDate="20160105"
 
     config = configparser.ConfigParser()
     config.read('./conf/mrt2db_geo.conf')
