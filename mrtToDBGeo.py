@@ -410,14 +410,15 @@ def runAnalysis(onlyfiles):
             else:
                 print_unused_asprefix(keyOriginASprefix)
 
-    toProcess = list(toProcessSet)  # Remove Duplicate Prefixes
-    # logger.print_log('List created. '+str(len(toProcess))+' new prefixes to be processed for '+filename)
+    toProcess = list(toProcessSet)
+    logger.print_log('List created. '+str(len(toProcess))+' new prefixes to be processed.')
     logger.print_log('Performing geolocation lookups.')
     numTh = 40
     inner_pool = processPool(numThreads=numTh)
     if isTest:
         toProcess = toProcess[:10000]
     retvals = inner_pool.runParallelWithPool(processEachPrefix, toProcess)
+    logger.print_log('Lookups complete will push local file(s).')
     dbpush_prefix_block_geo(db)
     dbpush_asn_prefix_geo(db)
     db.commit()
@@ -489,7 +490,7 @@ if __name__ == "__main__":
     logger = Logger(logfilename)
 
     isTest = False
-    localPush=True
+    localPush=False
 
     if localPush:
         logger.print_log('Pushing local file(s)')
