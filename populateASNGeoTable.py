@@ -50,14 +50,16 @@ def dbpush_asn_geo(db,asn,location):
         try:
             cur.execute("select ASNLocation from ASNGeo where ASN = '{0}' and GeoDate='{1}'".format(asn,geoDate))
             row=cur.fetchone()
-            if row is not None: #We have seen this ASN before 
+            if row is not None: #We have seen this ASN-GeoDate before
                 countries=re.sub('[{}]','',row[0])
                 tmpSet=countries.split(',')
                 for entry in tmpSet:
                    et=re.sub('[\"|\'| ]','',entry)
                    location.add(et)
-            print(str(location))
-            cur.execute("insert into ASNGeo(GeoDate,ASN,ASNLocation) values (%s,%s,%s)",(geoDate,asn,str(location)))
+                #print(str(location))
+                cur.execute("update ASNGeo set ASNLocation = '{0}' where GeoDate = '{1}'".format(str(location),geoDate)
+            else:
+                cur.execute("insert into ASNGeo(GeoDate,ASN,ASNLocation) values (%s,%s,%s)",(geoDate,asn,str(location)))
         except:
            raise Exception('Insert to ASNGeo Failed')
 
