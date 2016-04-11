@@ -57,7 +57,7 @@ def dbpush_asn_geo(db,asn,location):
                    et=re.sub('[\"|\'| ]','',entry)
                    location.add(et)
                 #print(str(location))
-                cur.execute("update ASNGeo set ASNLocation = '{0}' where GeoDate = '{1}'".format(str(location),geoDate))
+                cur.execute('update ASNGeo set ASNLocation = "{0}" where GeoDate = "{1}"'.format(str(location),geoDate))
             else:
                 cur.execute("insert into ASNGeo(GeoDate,ASN,ASNLocation) values (%s,%s,%s)",(geoDate,asn,str(location)))
         except:
