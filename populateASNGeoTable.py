@@ -84,8 +84,8 @@ def query_get_distinct_asn(db):
 
 
 def query_asn_locations(db,asn):
+    toReturn=set()
     with closing( db.cursor() ) as cur:
-        toReturn=set()
         try:
             cur.execute('SELECT distinct PrefixLocation FROM BGPPrefixGeo WHERE OriginAS = "{0}" and GeoDate="{1}"'.format(asn,geoDate))
             row=cur.fetchone()
@@ -115,10 +115,7 @@ def query_asn_locations(db,asn):
                     with closing(open('countriesAddedFromIXPData.txt','a+')) as asncountryFile:
                         print(asn+"|"+ct,file=asncountryFile)
 
-        if toReturn:
-            return toReturn
-        else:
-            return "set()"
+    return toReturn
      
 def getProcessedASN():
     try:
