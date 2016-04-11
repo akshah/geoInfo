@@ -103,6 +103,16 @@ def query_asn_locations(db,asn):
         except Exception:
            raise Exception('Select Query Failed')
 
+        #Lookup presence in IXPs
+        ixpDict=getIXPList(asn)
+        ixpCountrySet=getCountriesFromIXPDict(ixpDict)
+        if len(ixpCountrySet)>0:
+            for ct in ixpCountrySet:
+                if ct not in toReturn:
+                    toReturn.add(ct)
+                    with closing(open('countriesAddedFromIXPData.txt','a+')) as asncountryFile:
+                        print(asn+"|"+ct,file=asncountryFile)
+
         if toReturn:
             return toReturn
         else:
@@ -129,6 +139,40 @@ def print_to_processed_list(ASN):
         f.close()
     finally:
         lock.release()
+
+def getIXPList(AS):
+    ixpDict={}
+    db = pymysql.connect(host=config['IXPMySQL']['serverIP'],
+                         port=int(config['IXPMySQL']['serverPort']),
+                         user=config['IXPMySQL']['user'],
+                         passwd=config['IXPMySQL']['password'],
+                         db=config['IXPMySQL']['dbname'])
+    with closing(db.cursor()) as cur:
+        try:
+            query = "SELECT p.ID,ASn,ShortName,Name,City,Country,Continent FROM participants p ,ixps i where  p.ID=i.ID and ASn = '{0}'".format(AS)
+            cur.execute(query)
+            row = cur.fetchone()
+            while row is not None:
+                (ixpid,asn,shortName,name,city,country,continent)=row
+                ixpDict[ixpid]={}
+                ixpDict[ixpid]['asn']=asn
+                ixpDict[ixpid]['shortName']=shortName
+                ixpDict[ixpid]['name']=name
+                ixpDict[ixpid]['city']=city
+                ixpDict[ixpid]['country']=country
+                ixpDict[ixpid]['continent']=continent
+                row = cur.fetchone()
+        except:
+            logger.error('IXP fetch failed!')
+    db.close()
+    return ixpDict
+
+def getCountriesFromIXPDict(ixpDict):
+    countrySet=set()
+    for ixpID in ixpDict.keys():
+        countrySet.add(ixpDict[ixpID]['country'])
+    return countrySet
+
         
 def runAnalysis():
     ASN_List=query_get_distinct_asn(db)
