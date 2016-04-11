@@ -13,6 +13,8 @@ import time
 import pymysql
 import sys
 
+from geoInfo.MaxMindRepo import MaxMindRepo
+
 def usage(msg="Usage"):
     print(msg)
     print('python3 '+sys.argv[0]+' -d RIBS_LOCATION [-h]')
@@ -139,6 +141,28 @@ def print_to_processed_list(ASN):
     finally:
         lock.release()
 
+def getPCHList(AS):
+    counties=set()
+    db = pymysql.connect(host=config['IXPMySQL']['serverIP'],
+                         port=int(config['IXPMySQL']['serverPort']),
+                         user=config['IXPMySQL']['user'],
+                         passwd=config['IXPMySQL']['password'],
+                         db=config['IXPMySQL']['dbname'])
+    with closing(db.cursor()) as cur:
+        try:
+            query = 'select IP from pch_participants_list where ASN = " {0}";'.format(AS)
+            cur.execute(query)
+            row = cur.fetchone()
+            while row not None:
+                localCountrySet=mm.ipToCountry(row[0])
+                for ct in localCountrySet:
+                    counties.add(ct)
+                row = cur.fetchone()
+        except:
+            logger.error('IXP IP fetch from PCH failed!')
+    db.close()
+    return countries
+
 def getIXPList(AS):
     ixpDict={}
     db = pymysql.connect(host=config['IXPMySQL']['serverIP'],
@@ -168,8 +192,19 @@ def getIXPList(AS):
 
 def getCountriesFromIXPDict(ixpDict):
     countrySet=set()
+
     for ixpID in ixpDict.keys():
         countrySet.add(ixpDict[ixpID]['country'])
+        asn=ixpDict[ixpID]['asn']
+
+    #Add countries from PCH data
+    pchSetCountries=getPCHList(asn)
+    for pcountry in pchSetCountries:
+        if pcountry not in countrySet:
+            countrySet.add(pcountry)
+            with closing(open('countriesAddedFromPCHData.txt','a+')) as pchcountryFile:
+                print(asn+"|"+pcountry,file=pchcountryFile)
+
     return countrySet
 
         
@@ -232,6 +267,7 @@ if __name__ == "__main__":
     list_of_already_processed_ASN="geo_processed_ASN.txt"
     processedASN = set(getProcessedASN())
 
+    mm = MaxMindRepo('/home3/akshah/akshah_cron_bin/latest_maxmind_bin')
     runAnalysis()
  
     db.close()
