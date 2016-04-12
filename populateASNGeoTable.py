@@ -159,7 +159,7 @@ def getPCHList(AS):
                     countries.add(ct)
                 row = cur.fetchone()
         except:
-            logger.error('IXP IP fetch from PCH failed!')
+            logger.print_log('IXP IP fetch from PCH failed!')
     db.close()
     return countries
 
@@ -186,7 +186,7 @@ def getIXPList(AS):
                 ixpDict[ixpid]['continent']=continent
                 row = cur.fetchone()
         except:
-            logger.error('IXP fetch failed!')
+            logger.print_log('IXP fetch failed!')
     db.close()
     return ixpDict
 
