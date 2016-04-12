@@ -128,6 +128,19 @@ def query_asn_locations(db,asn):
                     with closing(open('countriesAddedFromPCHData.txt','a+')) as pchcountryFile:
                         print(asn+"|"+pcountry,file=pchcountryFile)
 
+        #Add countries from PeeringDB data
+        pdbMap={}
+        with closing(open('asIXPLanIP.txt','r')) as ixpLANIPs:
+            for line in ixpLANIPs:
+                vals=line.split('|')
+                pdbMap[vals[0]]=eval(str(vals[1]))
+        pdbCountries=getPDBList(asn,pdbMap)
+        if len(pdbCountries)>0:
+            for pcountry in pdbCountries:
+                if pcountry not in toReturn:
+                    toReturn.add(pcountry)
+                    with closing(open('countriesAddedFromPDBData.txt','a+')) as pdbcountryFile:
+                        print(asn+"|"+pcountry,file=pdbcountryFile)
 
     return toReturn
      
@@ -152,6 +165,15 @@ def print_to_processed_list(ASN):
         f.close()
     finally:
         lock.release()
+
+def getPDBList(AS,pdbMap):
+    countriesSet=set()
+    lanList=pdbMap[AS]
+    for netip in lanList:
+        localCountrySet=mm.ipToCountry(netip)
+        for ct in localCountrySet:
+            countriesSet.add(ct)
+    return countriesSet
 
 def getPCHList(AS):
     countries=set()
