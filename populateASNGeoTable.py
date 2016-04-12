@@ -153,7 +153,7 @@ def getPCHList(AS):
             query = 'select IP from pch_participants_list where ASN = " {0}";'.format(AS)
             cur.execute(query)
             row = cur.fetchone()
-            while row not None:
+            while row is not None:
                 localCountrySet=mm.ipToCountry(row[0])
                 for ct in localCountrySet:
                     countries.add(ct)
