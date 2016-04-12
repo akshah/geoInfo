@@ -117,6 +117,16 @@ def query_asn_locations(db,asn):
                     with closing(open('countriesAddedFromIXPData.txt','a+')) as asncountryFile:
                         print(asn+"|"+ct,file=asncountryFile)
 
+        #Add countries from PCH data
+        pchSetCountries=getPCHList(asn)
+        if len(pchSetCountries)>0:
+            for pcountry in pchSetCountries:
+                if pcountry not in toReturn:
+                    toReturn.add(pcountry)
+                    with closing(open('countriesAddedFromPCHData.txt','a+')) as pchcountryFile:
+                        print(asn+"|"+pcountry,file=pchcountryFile)
+
+
     return toReturn
      
 def getProcessedASN():
@@ -192,23 +202,8 @@ def getIXPList(AS):
 
 def getCountriesFromIXPDict(ixpDict):
     countrySet=set()
-    asn=""
     for ixpID in ixpDict.keys():
         countrySet.add(ixpDict[ixpID]['country'])
-        asn=ixpDict[ixpID]['asn']
-
-    #Add countries from PCH data
-    pchSetCountries=getPCHList(asn)
-
-    if len(pchSetCountries)>0:
-        print(asn)
-        print(pchSetCountries)
-        for pcountry in pchSetCountries:
-            if pcountry not in countrySet:
-                countrySet.add(pcountry)
-                with closing(open('countriesAddedFromPCHData.txt','a+')) as pchcountryFile:
-                    print(asn+"|"+pcountry,file=pchcountryFile)
-
     return countrySet
 
         
