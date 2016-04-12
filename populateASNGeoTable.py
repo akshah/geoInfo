@@ -199,7 +199,9 @@ def getCountriesFromIXPDict(ixpDict):
 
     #Add countries from PCH data
     pchSetCountries=getPCHList(asn)
+    print(asn)
     if len(pchSetCountries)>0:
+        print(pchSetCountries)
         for pcountry in pchSetCountries:
             if pcountry not in countrySet:
                 countrySet.add(pcountry)
