@@ -120,7 +120,7 @@ def query_asn_locations(db,asn):
 
         #Add countries from PCH data
         pchSetCountries=getPCHList(asn)
-        print(pchSetCountries)
+        #print(pchSetCountries)
         if len(pchSetCountries)>0:
             for pcountry in pchSetCountries:
                 if pcountry not in toReturn:
@@ -168,7 +168,7 @@ def getPCHList(AS):
             while row is not None:
                 ip=row[0][1:]
                 localCountrySet=mm.ipToCountry(ip)
-                print(ip,localCountrySet)
+                #print(ip,localCountrySet)
                 for ct in localCountrySet:
                     countries.add(ct)
                 row = cur.fetchone()
