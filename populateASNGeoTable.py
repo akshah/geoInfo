@@ -119,6 +119,7 @@ def query_asn_locations(db,asn):
 
         #Add countries from PCH data
         pchSetCountries=getPCHList(asn)
+        print(pchSetCountries)
         if len(pchSetCountries)>0:
             for pcountry in pchSetCountries:
                 if pcountry not in toReturn:
