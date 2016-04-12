@@ -192,7 +192,7 @@ def getIXPList(AS):
 
 def getCountriesFromIXPDict(ixpDict):
     countrySet=set()
-
+    asn=""
     for ixpID in ixpDict.keys():
         countrySet.add(ixpDict[ixpID]['country'])
         asn=ixpDict[ixpID]['asn']
