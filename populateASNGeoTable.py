@@ -142,7 +142,7 @@ def print_to_processed_list(ASN):
         lock.release()
 
 def getPCHList(AS):
-    counties=set()
+    countries=set()
     db = pymysql.connect(host=config['IXPMySQL']['serverIP'],
                          port=int(config['IXPMySQL']['serverPort']),
                          user=config['IXPMySQL']['user'],
@@ -156,7 +156,7 @@ def getPCHList(AS):
             while row not None:
                 localCountrySet=mm.ipToCountry(row[0])
                 for ct in localCountrySet:
-                    counties.add(ct)
+                    countries.add(ct)
                 row = cur.fetchone()
         except:
             logger.error('IXP IP fetch from PCH failed!')
