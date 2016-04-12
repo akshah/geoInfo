@@ -12,6 +12,7 @@ import getopt
 import time
 import pymysql
 import sys
+import traceback
 
 from geoInfo.MaxMindRepo import MaxMindRepo
 
@@ -171,6 +172,7 @@ def getPCHList(AS):
                     countries.add(ct)
                 row = cur.fetchone()
         except:
+            traceback.print_exc()
             logger.print_log('IXP IP fetch from PCH failed!')
     db.close()
     return countries
