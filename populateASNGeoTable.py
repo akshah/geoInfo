@@ -161,7 +161,7 @@ def getPCHList(AS):
                          db=config['IXPMySQL']['dbname'])
     with closing(db.cursor()) as cur:
         try:
-            query = 'select IP from pch_participants_list where ASN = " {0}";'.format(AS)
+            query = 'select IP from pch_participants_list where ASN = "{0}";'.format(" "+AS)
             cur.execute(query)
             row = cur.fetchone()
             while row is not None:
