@@ -166,8 +166,9 @@ def getPCHList(AS):
             cur.execute(query)
             row = cur.fetchone()
             while row is not None:
-                localCountrySet=mm.ipToCountry(row[0])
-                print(row[0],localCountrySet)
+                ip=row[0][1:]
+                localCountrySet=mm.ipToCountry(ip)
+                print(ip,localCountrySet)
                 for ct in localCountrySet:
                     countries.add(ct)
                 row = cur.fetchone()
