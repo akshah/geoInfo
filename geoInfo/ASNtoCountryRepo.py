@@ -25,7 +25,7 @@ class ASNtoCountryRepo():
                          db=config['geoInfoMySQL']['dbname'])
         with closing( db.cursor() ) as cur:
             try:
-                cur.execute('select ASN,ASNLocation from {0}.{1};'.format(dbname,'ASNGeo'))
+                cur.execute('select ASN,ASNLocation from {0};'.format('ASNGeo'))
                 row=cur.fetchone()
                 while row is not None:
                     asn = row[0]
