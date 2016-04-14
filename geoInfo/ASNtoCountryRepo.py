@@ -2,7 +2,7 @@ import re
 from collections import defaultdict
 from contextlib import closing
 import MySQLdb as pymysql
-
+import configparser
 '''
 Loads AS Geolocation in memory after reading from MySQL DB
 '''
