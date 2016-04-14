@@ -1,6 +1,7 @@
 import re
 from collections import defaultdict
 from contextlib import closing
+import MySQLdb as pymysql
 
 '''
 Loads AS Geolocation in memory after reading from MySQL DB
@@ -11,12 +12,20 @@ class ASNtoCountryRepo():
     def __init__(self):
         self.asHash = defaultdict(set)
 
-    def load(self,dbname,db):
+    def load(self):
         #This function will pull about 48K entries from DB
         #print('Starting to load AS locations')
+        config = configparser.ConfigParser()
+        config.read('conf/geoInfo.conf')
+        config.sections()
+        db = pymysql.connect(host=config['geoInfoMySQL']['serverIP'],
+                         port=int(config['geoInfoMySQL']['serverPort']),
+                         user=config['geoInfoMySQL']['user'],
+                         passwd=config['geoInfoMySQL']['password'],
+                         db=config['geoInfoMySQL']['dbname'])
         with closing( db.cursor() ) as cur:
             try:
-                cur.execute('select ASN,ASNLocation from {0}.{1};'.format(dbname,'ASN_Geo'))
+                cur.execute('select ASN,ASNLocation from {0}.{1};'.format(dbname,'ASNGeo'))
                 row=cur.fetchone()
                 while row is not None:
                     asn = row[0]
@@ -38,6 +47,7 @@ class ASNtoCountryRepo():
                     row=cur.fetchone()
             except Exception:
                 raise Exception('Fetch AS locations query failed')
+        db.close()
 
     def getNumASNs(self):
         return len(self.asHash)
