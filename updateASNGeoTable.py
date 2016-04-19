@@ -46,7 +46,16 @@ def runAnalysis(db):
             countrySet=eval(vals[1])
             asSet=eval(vals[2])
             for asn in asSet:
-                dbpush_asn_geo(db,asn,countrySet)
+                if asn not in asCountryDict.keys():
+                    asCountryDict[asn]=set()
+                for country in countrySet:
+                    asCountryDict[asn].add(country)
+
+    for asn,countrySet in asCountryDict.items():
+        print('To push: '+str(asn)+' '+str(countrySet))
+        if isTest:
+            exit(0)
+        #dbpush_asn_geo(db,asn,countrySet)
 
 
 if __name__ == "__main__":
@@ -56,7 +65,10 @@ if __name__ == "__main__":
         print("ERROR: Please use python3.")
         exit(0)
 
-    isTest=False
+    isTest=True
+
+    updateFile='AdvancedIPCountryASPP.txt'
+    asCountryDict={}
 
     geoDate="20160105"
 
