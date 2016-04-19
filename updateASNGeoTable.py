@@ -14,6 +14,7 @@ import pymysql
 import sys
 import traceback
 from customUtilities.helperFunctions import *
+from customUtilities.logger import logger
 
 def dbpush_asn_geo(db,asn,location):
     #print("In dbpush_asn_geo")
@@ -38,6 +39,7 @@ def runAnalysis(db):
     #Read the file that contains updates to geolocation
     #Format expected:
     #IP|{'US','IN'..}|{AS1,AS2,..}  #AS set because IP can be announced my more than one AS
+    logger.info('Preparing data to push.')
     with closing(open(updateFile,'r')) as fp:
         for lineRaw in fp:
             line=lineRaw.rstrip('\n')
@@ -50,7 +52,7 @@ def runAnalysis(db):
                     asCountryDict[asn]=set()
                 for country in countrySet:
                     asCountryDict[asn].add(country)
-
+    logger.info('Starting data insert to DB.')
     for asn,countrySet in asCountryDict.items():
         print('To push: '+str(asn)+' '+str(countrySet))
         if isTest:
@@ -100,11 +102,11 @@ if __name__ == "__main__":
     if not logfilename:
         scriptname=sys.argv[0].split('.')
         logfilename=scriptname[0]+'.log'
-    logger=Logger(logfilename)
+    logger=logger(logfilename)
 
     runAnalysis(db)
 
     db.close()
 
     end_time,_=currentTime()
-    logger.print_log('Finished processing in '+str(int((end_time-start_time)/60))+' minutes and '+str(int((end_time-start_time)%60))+' seconds.')
+    logger.info('Finished processing in '+str(int((end_time-start_time)/60))+' minutes and '+str(int((end_time-start_time)%60))+' seconds.')
