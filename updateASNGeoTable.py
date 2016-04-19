@@ -23,16 +23,20 @@ def dbpush_asn_geo(db,asn,location):
             cur.execute("select ASNLocation from ASNGeo where ASN = '{0}' and GeoDate='{1}'".format(asn,geoDate))
             row=cur.fetchone()
             if row is not None: #We have seen this ASN-GeoDate before
-                countries=re.sub('[{}]','',row[0])
-                tmpSet=countries.split(',')
-                for entry in tmpSet:
-                   et=re.sub('[\"|\'| ]','',entry)
-                   location.add(et)
-                #print(str(location))
+                #countries=re.sub('[{}]','',row[0])
+                #tmpSet=countries.split(',')
+                #for entry in tmpSet:
+                #   et=re.sub('[\"|\'| ]','',entry)
+                #   location.add(et)
+                countries=eval(row[0])
+                for ct in countries:
+                    location.add(ct)
+                print(str(location))
                 cur.execute('update ASNGeo set ASNLocation = "{0}" where GeoDate = "{1}"'.format(str(location),geoDate))
             else:
                 cur.execute("insert into ASNGeo(GeoDate,ASN,ASNLocation) values (%s,%s,%s)",(geoDate,asn,str(location)))
         except:
+            traceback.print_exc()
            raise Exception('Insert to ASNGeo Failed')
 
 def runAnalysis(db):
