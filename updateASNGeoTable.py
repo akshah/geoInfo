@@ -37,7 +37,7 @@ def dbpush_asn_geo(db,asn,location):
                 cur.execute("insert into ASNGeo(GeoDate,ASN,ASNLocation) values (%s,%s,%s)",(geoDate,asn,str(location)))
         except:
             traceback.print_exc()
-           raise Exception('Insert to ASNGeo Failed')
+            raise Exception('Insert to ASNGeo Failed')
 
 def runAnalysis(db):
     #Read the file that contains updates to geolocation
