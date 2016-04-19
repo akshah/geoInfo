@@ -57,7 +57,7 @@ def runAnalysis(db):
         print('To push: '+str(asn)+' '+str(countrySet))
         if isTest:
             exit(0)
-        #dbpush_asn_geo(db,asn,countrySet)
+        dbpush_asn_geo(db,asn,countrySet)
 
 
 if __name__ == "__main__":
@@ -67,7 +67,7 @@ if __name__ == "__main__":
         print("ERROR: Please use python3.")
         exit(0)
 
-    isTest=True
+    isTest=False
 
     updateFile='AdvancedIPCountryASPP.txt'
     asCountryDict={}
