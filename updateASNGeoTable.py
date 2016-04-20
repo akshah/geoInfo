@@ -1,7 +1,7 @@
 #!/usr/bin/python
 
 
-from __future__ import print_function
+#from __future__ import print_function
 from contextlib import closing
 
 import threading
@@ -16,11 +16,11 @@ import traceback
 from customUtilities.helperFunctions import *
 from customUtilities.logger import logger
 
-def dbpush_asn_geo(db,asn,location):
+def dbpush_asn_geo(db,asnF,location):
     #print("In dbpush_asn_geo")
     with closing( db.cursor()) as cur:
         try:
-            cur.execute("select ASNLocation from ASNGeo where ASN = '{0}' and GeoDate='{1}'".format(asn,geoDate))
+            cur.execute("select ASNLocation from ASNGeo where ASN = '{0}' and GeoDate='{1}'".format(asnF,geoDate))
             row=cur.fetchone()
             if row is not None: #We have seen this ASN-GeoDate before
                 #countries=re.sub('[{}]','',row[0])
@@ -28,13 +28,16 @@ def dbpush_asn_geo(db,asn,location):
                 #for entry in tmpSet:
                 #   et=re.sub('[\"|\'| ]','',entry)
                 #   location.add(et)
+                print(asnF,str(location),flush=True)
                 countries=eval(row[0])
+                print(str(countries),flush=True)
                 for ct in countries:
                     location.add(ct)
-                print(str(location))
-                cur.execute('update ASNGeo set ASNLocation = "{0}" where GeoDate = "{1}"'.format(str(location),geoDate))
+                print(str(location),flush=True)
+                cur.execute('update ASNGeo set ASNLocation = "{0}" where ASN="{1}" and GeoDate = "{2}"'.format(str(location),asnF,geoDate))
             else:
-                cur.execute("insert into ASNGeo(GeoDate,ASN,ASNLocation) values (%s,%s,%s)",(geoDate,asn,str(location)))
+                cur.execute("insert into ASNGeo(GeoDate,ASN,ASNLocation) values (%s,%s,%s)",(geoDate,asnF,str(location)))
+            db.commit()
         except:
             traceback.print_exc()
             raise Exception('Insert to ASNGeo Failed')
@@ -57,18 +60,19 @@ def runAnalysis(db):
                 for country in countrySet:
                     asCountryDict[asn].add(country)
     logger.info('Starting data insert to DB.')
-    for asn,countrySet in asCountryDict.items():
-        print('To push: '+str(asn)+' '+str(countrySet))
+    logger.info(str(len(asCountryDict.keys()))+' ASNs to be updated.')
+    for asnL,countrySetL in asCountryDict.items():
+        print('To push: '+str(asnL)+' '+str(countrySetL),flush=True)
         if isTest:
             exit(0)
-        dbpush_asn_geo(db,asn,countrySet)
+        dbpush_asn_geo(db,asnL,countrySetL)
 
 
 if __name__ == "__main__":
     start_time,_=currentTime()
 
     if sys.version_info < (3,0):
-        print("ERROR: Please use python3.")
+        print("ERROR: Please use python3.",flush=True)
         exit(0)
 
     isTest=False
@@ -108,8 +112,9 @@ if __name__ == "__main__":
         logfilename=scriptname[0]+'.log'
     logger=logger(logfilename)
 
+    print('Start',flush=True)
     runAnalysis(db)
-
+    print('End',flush=True)
     db.close()
 
     end_time,_=currentTime()
