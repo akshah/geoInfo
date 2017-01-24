@@ -5,6 +5,7 @@ import MySQLdb as pymysql
 import configparser
 '''
 Loads AS Geolocation in memory after reading from MySQL DB
+TODO: Add ability to read directly from API
 '''
 
 class ASNtoCountryRepo():
