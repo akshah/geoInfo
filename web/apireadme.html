@@ -1,0 +1,269 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>BGPmon GeoInfo</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+<style media="screen" type="text/css">
+body  {
+font-family: "Helvetica", "Sans-Serif";
+background: #F4F4F4;
+margin: 0;
+}
+
+#container { 
+width: 1000px;
+margin: 0 auto;
+background: #FFFFFF;
+}
+
+#header { 
+padding: 45px 0 20px 40px;
+} 
+
+#header a {
+color: #121212;
+text-decoration: none;
+font-size: 30px; 
+font-family: "Helvetica","Myriad Pro", "Arial Narrow";
+}
+
+#menu {
+background-color: #3b7687; 
+padding: 6px 0 6px 40px;
+}
+
+#menu a {
+color: #c5d6db;
+text-decoration: none; 
+font-size: 14px; 
+font-family: "Arial Narrow", "Myriad Pro";
+}
+
+#menu a:hover {
+color: #ecf2f3;
+}
+
+#sidebar {
+float: left;
+width: 120px;
+padding: 30px 0 0 40px;
+margin: 0;
+font-family: "Helvetica","Myriad Pro", "Arial Narrow";
+}
+
+h1 {
+margin: 0px;
+color: #869843; 
+font-size:24px; 
+font-family: "Arial Narrow", "Myriad Pro"; 
+font-weight: normal;
+}
+
+h2 {
+color: #3b7687;
+font-size: 15px; 
+margin: 20px 0 5px 0;
+}
+
+#main { 
+margin: 0 0 0 180px;
+padding: 35px 40px 30px 0;
+color: #444444;
+font-family: "Helvetica","Georgia";
+font-size: 13px; 
+line-height: 18px;
+text-align: justify;
+} 
+
+#main a {
+color: #3b7687; 
+text-decoration: none;
+}
+
+#main a:hover {
+color: #444444;
+}
+
+#footer {
+padding: 6px 40px 6px 40px;
+background: #d6d6d6; 
+font-family: "Lucida Sans Unicode";
+color: #444444;
+font-size: 11px;
+}
+
+#footer a {
+text-decoration: none; 
+color: #262626;
+}
+
+#footer a:hover {
+color: #666666;
+}
+
+.separator {
+font-size:11px;
+color:#FFFFFF;
+}
+body  {
+font-family: 'Helvetica', 'Arial', sans-serif;
+background: #F4F4F4;
+margin: 0;
+}
+
+#container { 
+font-family: 'Helvetica', 'Arial', sans-serif;
+width: 860px;
+margin: 0 auto;
+background: #FFFFFF;
+}
+
+#header { 
+padding: 45px 0 20px 40px;
+} 
+
+#header a {
+color: #121212;
+text-decoration: none;
+font-size: 30px; 
+font-family: "Myriad Pro", "Arial Narrow";
+}
+
+#menu {
+background-color: #3b7687; 
+padding: 6px 0 6px 40px;
+}
+
+#menu a {
+color: #c5d6db;
+text-decoration: none; 
+font-size: 14px; 
+font-family: "Arial Narrow", "Myriad Pro";
+}
+
+#menu a:hover {
+color: #ecf2f3;
+}
+
+#sidebar {
+float: left;
+width: 140px;
+padding: 30px 0 0 40px;
+margin: 0;
+}
+
+h1 {
+margin: 0px;
+color: #869843; 
+font-size:24px; 
+font-family: "Arial Narrow", "Myriad Pro"; 
+font-weight: normal;
+}
+
+h2 {
+color: #3b7687;
+font-size: 15px; 
+margin: 20px 0 5px 0;
+}
+
+#main { 
+margin: 0 0 0 180px;
+padding: 35px 40px 30px 0;
+color: #444444;
+font-family: "Georgia";
+font-size: 13px; 
+line-height: 18px;
+text-align: justify;
+} 
+
+#main a {
+color: #3b7687; 
+text-decoration: none;
+}
+
+#main a:hover {
+color: #444444;
+}
+#footer {
+	padding: 3px 40px 3px 40px;
+	background: #d6d6d6;
+	font-family: "Lucida Sans Unicode";
+	color: #444444;
+	font-size: 11px;
+}
+
+#footer a {
+	text-decoration: none;
+	color: #262626;
+}
+
+#footer a:hover {
+	color: #666666;
+}
+
+.separator {
+	font-size:11px;
+	color:#FFFFFF;
+}
+.separator {
+font-size:11px;
+color:#FFFFFF;
+}
+</style>
+</head>
+<body>
+<div id="container">
+  <div id="header"> <a href="">BGPmon GeoInfo API</a> </div>
+  <div id="menu"><a href="/readme">API</a>&nbsp;&nbsp;<a href="">|</a>&nbsp;&nbsp;<a href="/sample">Sample Code</a>&nbsp;&nbsp;<a href="">|</a>&nbsp;&nbsp;<a href="/feedback">Feedback</a></div>
+  <div id="sidebar"><h1>Info</h1></div>
+  <div id="main"><p>Our geolocation data is available using RESTful API. 
+    The data is obtained using BGP data from 
+    RouteViews and RIPE RIS, Infrastructure geolocation from CAIDA Ark Traceroutes, iPlane IP to PoP mappings and RIPE OpenIPMap, IXP participation from Packet Clearing House, PeeringDB and IXP websites from January 2016. Each query returns an array of JSON 
+    objects which can be read using any standard JSON parsing 
+    library. At this point we limit query rate to only 60 queries 
+    per second.</p> 
+    To view results in browser you can install <a href="http://jsonview.com/" target="_blank">JSONView extension</a>.
+    </div>
+  <div id="sidebar"><h1>Examples</h1></div>
+	<div id="main"> 
+		General format: <b>geoinfo.bgpmon.io/DATA_DATE/QUERY/VALUE</b>
+		<ul><li>To get the list of all available data dates: <a href="/data_dates">geoinfo.bgpmon.io/data_dates</a></li>
+			<li>To get the latest data date: <a href="/latest_data_date">geoinfo.bgpmon.io/latest_data_date</a></li></ul>
+		Here are the list of queries we support:
+		<ul> 	
+	<li>curl <a href ="/201601/asn_country/12145">geoinfo.bgpmon.io/201601/asn_country/12145</a></li>
+	<ul><li>Shows country geolocation of the AS</li></ul>
+	<br>
+	<li>curl <a href ="/201601/bgp_prefix_country/129.82.0.0/16">geoinfo.bgpmon.io/201601/bgp_prefix_country/129.82.0.0/16</a></li>
+	<ul><li>Shows country geolocation of the BGP prefix</li></ul>
+	<br>
+	<li>curl <a href ="/201601/prefixes_announced_from_asn/12145">geoinfo.bgpmon.io/201601/prefixes_announced_from_asn/12145</a></li>
+	<ul><li>Shows all the prefixes announced from the AS</li></ul>
+	<br>
+	<li>curl <a href ="/201601/prefixes_announced_from_country/KE">geoinfo.bgpmon.io/201601/prefixes_announced_from_country/KE</a></li>
+	<ul><li>Shows all the BGP prefixes that originate ONLY from the country</li></ul>
+	<br>
+	<li>curl geoinfo.bgpmon.io/DATA_DATE/bgp_prefixes_num_countries/[>,<,=]M</li>
+	<ul><li>Shows BGP prefixes with [>,<,=] M countries in geolocation</li>
+	    <li><a href="/201601/bgp_prefixes_num_countries/>2">geoinfo.bgpmon.io/201601/bgp_prefixes_num_countries/>2</a></li></ul>
+	<br>
+	<li>curl geoinfo.bgpmon.io/DATA_DATE/slash24_prefixes_num_countries/[>,<,=]M</li>
+	<ul><li>Shows /24 prefixes with [>,<,=] M countries in geolocation</li>
+	    <li><a href="/201601/slash24_prefixes_num_countries/=3">geoinfo.bgpmon.io/201601/slash24_prefixes_num_countries/=3</a></li></ul>
+	</ul>
+    </ul>
+    </div>
+    <div id="sidebar"><h1>Contact</h1></div>
+  <div id="main">
+	  To send feedback or contribute to ASMap data please leave comments <a href="/feedback">here</a> or email:<br>
+      akshah AT cs.colostate.edu<br> christos AT cs.colostate.edu</div>
+<div id="footer">
+	<p style="display:inline" align=left>© Network Security Lab, Colorado State University 
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+	<a href="http://github.com/akshah/geoinfo"><img src="http://alpha.netsec.colostate.edu/~akshah/images/githubIcon.png" title="GitHub" width="25" height="25" style="vertical-align:middle"/></a></p>
+		    </div>
+</div>
+</body>
+</html>
