@@ -116,6 +116,17 @@ def print_list_of_processed_prefixes(asnprefix):
     finally:
         lock.release()
 
+def print_list_of_all_selected_prefixes(asnprefix):
+    lock = threading.RLock()
+    lock.acquire()
+    try:
+        Lfile = open(list_of_prefixes_selected_to_be_processed, 'a+')
+        print(asnprefix, file=Lfile)
+        # Also update the in-memory list of processed prefixes
+        processedPrefixes.add(asnprefix)
+        Lfile.close()
+    finally:
+        lock.release()
 
 def print_unresolved_ip(prefixHost):
     lock = threading.RLock()
@@ -411,9 +422,12 @@ def runAnalysis(onlyfiles):
                 print_unused_asprefix(keyOriginASprefix)
 
     toProcess = list(toProcessSet)
+    # List of prefixes to be processed
+    for entry in toProcess:
+        print_list_of_all_selected_prefixes(entry)
     logger.print_log('List created. '+str(len(toProcess))+' new prefixes to be processed.')
     logger.print_log('Performing geolocation lookups.')
-    numTh = 40
+    numTh = 20
     inner_pool = processPool(numThreads=numTh)
     if isTest:
         toProcess = toProcess[:10000]
@@ -422,7 +436,7 @@ def runAnalysis(onlyfiles):
     dbpush_prefix_block_geo(db)
     dbpush_asn_prefix_geo(db)
     db.commit()
-
+    # List of already processed prefixes
     for entry in toProcess:
         print_list_of_processed_prefixes(entry)
     logger.print_log('Done all processing')
@@ -466,6 +480,7 @@ if __name__ == "__main__":
                          db=config['MySQL']['dbname'])
 
     # dbname="geoinfo_archive"
+    list_of_prefixes_selected_to_be_processed="selected_prefixes_to_process.txt"
     list_of_already_processed_ribs = "geo_processed_ribs.txt"
     list_of_already_processed_prefixes = "geo_processed_prefixes.txt"
     prefix_block_geo = "prefix_block_geo.txt"

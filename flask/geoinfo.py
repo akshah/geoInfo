@@ -5,10 +5,12 @@ from flask import Flask,redirect
 from flask import g
 from flask import Response, render_template
 from flask import request
+from flask import jsonify
 from flask_limiter import Limiter 
 import json
 import MySQLdb
 import ipaddress
+import logging
 
 
 app = Flask(__name__)
@@ -36,6 +38,11 @@ ERR_107={"error_code": 107,"error_message": "User input error. No or incorrect n
 Example: http://geoinfo.bgpmon.io/201601/bgp_prefixes_num_countries/=2"}
 ERR_108={"error_code": 107,"error_message": "User input error. No or incorrect number specified. \
 Example: http://geoinfo.bgpmon.io/201601/slash24_prefixes_num_countries/=2"}
+
+#Logging
+logging.basicConfig(filename='geoinfo.log',\
+                        format='[%(asctime)s] [%(levelname)s] %(message)s',datefmt='%m-%d-%Y %I:%M:%S')
+logging.info('GeoInfo API running.')
 
 @app.before_request
 def db_connect():
@@ -84,6 +91,8 @@ def check_prefix(ip,leng):
     except:
         return False
 
+def getIP(request):
+    return jsonify({'ip': request.remote_addr})
 
 @app.route("/")
 def hello():
@@ -106,7 +115,7 @@ def readme():
 	line=line.rstrip()
 	readme=readme+line
     fp.close()	
-    
+    logging.info(str(getIP(request))
     return readme
 
 @app.route("/feedback", methods=['GET'])
