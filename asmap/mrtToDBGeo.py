@@ -27,7 +27,7 @@ from geoInfo.MaxMindRepo import MaxMindRepo
 
 def usage(msg="Usage"):
     print(msg)
-    print('python3 ' + sys.argv[0] + ' -d RIBS_LOCATION [-h]')
+    print('python3 ' + sys.argv[0] + ' -d RIBS_LOCATION -g GEODATE -m MAXMIND_FILE [-h]')
     sys.exit(2)
 
 
@@ -425,17 +425,31 @@ def runAnalysis(onlyfiles):
     # List of prefixes to be processed
     for entry in toProcess:
         print_list_of_all_selected_prefixes(entry)
+    ###Read back if needed, in case the code crashed.###
+    readAgain = False
+    toProcess=[]
+    if readAgain:
+        with closing(open('selected_prefixes_to_process.txt','r')) as fp:
+            for line in fp:
+                toProcess.append(line.rstrip('\n'))
+
     logger.print_log('List created. '+str(len(toProcess))+' new prefixes to be processed.')
     logger.print_log('Performing geolocation lookups.')
-    numTh = 20
+    numTh = 10
     inner_pool = processPool(numThreads=numTh)
     if isTest:
         toProcess = toProcess[:10000]
     retvals = inner_pool.runParallelWithPool(processEachPrefix, toProcess)
     logger.print_log('Lookups complete will push local file(s).')
+    db = pymysql.connect(host=config['MySQL']['serverIP'],
+                         port=int(config['MySQL']['serverPort']),
+                         user=config['MySQL']['user'],
+                         passwd=config['MySQL']['password'],
+                         db=config['MySQL']['dbname'])
     dbpush_prefix_block_geo(db)
     dbpush_asn_prefix_geo(db)
     db.commit()
+    db.close()
     # List of already processed prefixes
     for entry in toProcess:
         print_list_of_processed_prefixes(entry)
@@ -453,7 +467,7 @@ if __name__ == "__main__":
     logfilename = None
     dirpath = None
     try:
-        opts, args = getopt.getopt(sys.argv[1:], 'l:d:h', ['logfile', 'directory', 'help'])
+        opts, args = getopt.getopt(sys.argv[1:], 'l:d:g:m:h', ['logfile', 'directory', 'help'])
     except getopt.GetoptError:
         usage('GetoptError: Arguments not correct')
 
@@ -465,19 +479,26 @@ if __name__ == "__main__":
             logfilename = arg
         elif opt in ('-d', '--directory'):
             dirpath = arg
+        elif opt in ('-g', '--geodate'):
+            geoDate = arg
+        elif opt in ('-m', '--maxmindfile'):
+            maxmindFile = arg
 
     if not dirpath:
         usage('Missing directory to read ASN|Prefix from')
+    if not geoDate:
+        usage('Missing geoDate')
+    if not maxmindFile:
+        usage('Missing maxmind filename')
+
+    #maxmind = MaxMindRepo('/home3/akshah/maxmindFiles/20160105_maxmind_bin')
+    #geoDate = '20160105'
+
+    maxmind = MaxMindRepo(maxmindFile)
 
     config = configparser.ConfigParser()
     config.read('./conf/mrt2db_geo.conf')
     config.sections()
-
-    db = pymysql.connect(host=config['MySQL']['serverIP'],
-                         port=int(config['MySQL']['serverPort']),
-                         user=config['MySQL']['user'],
-                         passwd=config['MySQL']['password'],
-                         db=config['MySQL']['dbname'])
 
     # dbname="geoinfo_archive"
     list_of_prefixes_selected_to_be_processed="selected_prefixes_to_process.txt"
@@ -495,8 +516,7 @@ if __name__ == "__main__":
     unused_asprefix = 'unused_asprefix.txt'
     f = open(unused_asprefix, 'a+')
     f.close()
-    maxmind = MaxMindRepo('/home3/akshah/maxmindFiles/20160105_maxmind_bin')
-    geoDate = '20160105'
+
 
     # Logger
     if not logfilename:
@@ -508,6 +528,11 @@ if __name__ == "__main__":
     localPush=False
 
     if localPush:
+        db = pymysql.connect(host=config['MySQL']['serverIP'],
+                             port=int(config['MySQL']['serverPort']),
+                             user=config['MySQL']['user'],
+                             passwd=config['MySQL']['password'],
+                             db=config['MySQL']['dbname'])
         logger.print_log('Pushing local file(s)')
         dbpush_prefix_block_geo(db)
         dbpush_asn_prefix_geo(db)
@@ -516,7 +541,7 @@ if __name__ == "__main__":
         logger.print_log('Finished pushing local file(s)!')
         exit(0)
 
-
+    # Need one global write object since threads will use one at a time to write to file
     writeObj = writeToDisk()
     # Get list prefixes that were processed before, if any
     processedPrefixes = set(getProcessedPrefixes())
@@ -532,8 +557,6 @@ if __name__ == "__main__":
 
     mrtfiles.sort()
     runAnalysis(mrtfiles)
-
-    db.close()
 
     end_time, _ = current_time()
     logger.print_log('Finished processing in ' + str(int((end_time - start_time) / 60)) + ' minutes and ' + str(

@@ -45,7 +45,7 @@ def dbpush_asn_geo(db,asnF,location):
 def runAnalysis(db):
     #Read the file that contains updates to geolocation
     #Format expected:
-    #IP|{'US','IN'..}|{AS1,AS2,..}  #AS set because IP can be announced my more than one AS
+    #IP|{'US','IN'..}|{AS1,AS2,..}  #AS set because IP can be announced by more than one AS
     logger.info('Preparing data to push.')
     with closing(open(updateFile,'r')) as fp:
         for lineRaw in fp:

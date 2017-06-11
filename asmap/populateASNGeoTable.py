@@ -258,7 +258,7 @@ if __name__ == "__main__":
        
     isTest=False
 
-    geoDate="20160105"
+    #geoDate="20160105"
 
     config = configparser.ConfigParser()
     config.read('./conf/mrt2db_geo.conf')
@@ -282,7 +282,11 @@ if __name__ == "__main__":
             usage()
             sys.exit(2)
         elif opt in ('-l', '--logfile'):
-            logfilename = arg 
+            logfilename = arg
+        elif opt in ('-g', '--geodate'):
+            geoDate = arg
+        elif opt in ('-m', '--maxmindfile'):
+            maxmindFile = arg
     
     #Logger
     if not logfilename:
@@ -293,7 +297,9 @@ if __name__ == "__main__":
     list_of_already_processed_ASN="geo_processed_ASN.txt"
     processedASN = set(getProcessedASN())
 
-    mm = MaxMindRepo('/home3/akshah/akshah_cron_bin/latest_maxmind_bin')
+    #mm = MaxMindRepo('/home3/akshah/akshah_cron_bin/latest_maxmind_bin')
+    mm = MaxMindRepo(maxmindFile)
+
     runAnalysis()
  
     db.close()
