@@ -287,6 +287,11 @@ if __name__ == "__main__":
             geoDate = arg
         elif opt in ('-m', '--maxmindfile'):
             maxmindFile = arg
+
+    if not geoDate:
+        usage('Missing geoDate')
+    if not maxmindFile:
+        usage('Missing maxmind filename')
     
     #Logger
     if not logfilename:
